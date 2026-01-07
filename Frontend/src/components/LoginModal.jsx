@@ -44,11 +44,12 @@ import { useState } from 'react';
         },
         body:JSON.stringify({email,password})
       });
+      const result = await response.json();
       if(response.ok){
+        console.log(result);
         alert('Login successful! email: ' + email);
       }
       else{
-        const result = await response.json();
         alert(result.message);
       }
       // Add your authentication logic here

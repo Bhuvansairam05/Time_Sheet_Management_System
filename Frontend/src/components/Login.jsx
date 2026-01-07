@@ -39,11 +39,7 @@ function Login(){
       // If validation passes, proceed with login
       console.log('Login attempt with:');
       console.log('Username:', username);
-      console.log('Password:', password);
-      
-      // Add your authentication logic here
-      // Example: call API, check credentials, redirect to dashboard
-      
+      console.log('Password:', password);  
       alert('Login successful! Username: ' + username);
     }
   };
