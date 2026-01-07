@@ -1,23 +1,23 @@
 import { useState } from 'react';
 
  function LoginModal({ isOpen, onClose }) {
-  const [username, setUsername] = useState('');
+  const [email, setemail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({
-    username: '',
+    email: '',
     password: ''
   });
 
   const validateForm = () => {
     let isValid = true;
     const newErrors = {
-      username: '',
+      email: '',
       password: ''
     };
 
-    if (!username.trim()) {
-      newErrors.username = 'Username field is required';
+    if (!email.trim()) {
+      newErrors.email = 'email field is required';
       isValid = false;
     }
 
@@ -35,10 +35,10 @@ import { useState } from 'react';
     
     if (validateForm()) {
       console.log('Login attempt with:');
-      console.log('Username:', username);
+      console.log('email:', email);
       console.log('Password:', password);
       
-      alert('Login successful! Username: ' + username);
+      alert('Login successful! email: ' + email);
       // Add your authentication logic here
     }
   };
@@ -131,29 +131,29 @@ import { useState } from 'react';
               </div>
 
               <div className="space-y-4">
-                {/* Username Field */}
+                {/* email Field */}
                 <div>
-                  <label htmlFor="username" className="block text-sm font-text text-gray-700 mb-1">
-                    Username
+                  <label htmlFor="email" className="block text-sm font-text text-gray-700 mb-1">
+                    Email
                   </label>
                   <input
                     type="text"
-                    id="username"
-                    name="username"
-                    value={username}
+                    id="email"
+                    name="email"
+                    value={email}
                     onChange={(e) => {
-                      setUsername(e.target.value);
-                      if (errors.username) setErrors({...errors, username: ''});
+                      setemail(e.target.value);
+                      if (errors.email) setErrors({...errors, email: ''});
                     }}
-                    placeholder="Enter your username"
+                    placeholder="Enter your email"
                     className={`w-64 px-4 py-2.5 border-2 rounded-lg focus:outline-none transition ${
-                      errors.username ? 'border-red-500' : 'border-gray-300 focus:border-orange-600'
+                      errors.email ? 'border-red-500' : 'border-gray-300 focus:border-orange-600'
                     }`}
                   />
-                  {errors.username && (
+                  {errors.email && (
                     <p className="mt-1 text-xs text-red-600 flex items-center">
                       <span className="mr-1">⚠️</span>
-                      {errors.username}
+                      {errors.email}
                     </p>
                   )}
                 </div>
