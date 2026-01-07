@@ -30,15 +30,27 @@ import { useState } from 'react';
     return isValid;
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     
     if (validateForm()) {
       console.log('Login attempt with:');
       console.log('email:', email);
       console.log('Password:', password);
-      
-      alert('Login successful! email: ' + email);
+      const response = await fetch("http://localhost:5000/api/auth/login",{
+        method:"POST",
+        headers:{
+          "content-type":"application/json"
+        },
+        body:JSON.stringify({email,password})
+      });
+      if(response.ok){
+        alert('Login successful! email: ' + email);
+      }
+      else{
+        const result = await response.json();
+        alert(result.message);
+      }
       // Add your authentication logic here
     }
   };
