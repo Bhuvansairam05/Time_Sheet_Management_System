@@ -58,11 +58,8 @@ function LoginModal({ isOpen, onClose }) {
             secondary: "#fff",
           },
         });
-
-
         localStorage.setItem("token", result.token);
         localStorage.setItem("role", role);
-
         if (role === "admin") {
           navigate("/admin/dashboard");
         } else if (is_manager) {
@@ -81,11 +78,50 @@ function LoginModal({ isOpen, onClose }) {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-  const handleGoogleSignin = () => {
-    console.log('Google signin clicked');
-    // Add Google OAuth logic here
-    alert('Google signin will be implemented here');
-  };
+    
+
+const handleGoogleSignin = () => {
+  /* global google */
+  google.accounts.id.initialize({
+    client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+    callback: handleGoogleResponse,
+    ux_mode: "popup",
+    use_fedcm_for_prompt: false, // 🔥 THIS FIXES YOUR ERROR
+  });
+
+  google.accounts.id.prompt(); // opens popup
+};
+  const handleGoogleResponse = async (response) => {
+  try {
+    const res = await fetch("http://localhost:5000/api/auth/google", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        token: response.credential,
+      }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("role", data.user.role);
+
+      if (data.user.role === "admin") {
+        navigate("/admin/dashboard");
+      } else if (data.user.is_manager) {
+        navigate("/manager/dashboard");
+      } else {
+        navigate("/employee/dashboard");
+      }
+    }
+  } catch (err) {
+    console.error(err);
+  }
+};
+
   if (!isOpen) return null;
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
@@ -156,7 +192,7 @@ function LoginModal({ isOpen, onClose }) {
 
             {/* Login Form */}
             <div className='overflow-y-hidden'>
-              <div className="mb-6">
+              <div className="mb-2">
                 <h2 className="text-2xl font-bold text-gray-800 mb-1">Login</h2>
                 <p className="text-gray-600 text-sm">Enter your credentials to access your account</p>
                 {errors.message && (
@@ -168,7 +204,7 @@ function LoginModal({ isOpen, onClose }) {
 
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {/* email Field */}
                 <div>
                   <label htmlFor="email" className="block text-sm font-text text-gray-700 mb-1">

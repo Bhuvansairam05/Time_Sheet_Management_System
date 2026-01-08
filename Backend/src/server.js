@@ -4,7 +4,14 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 const path = require("path");
 const app = express();
-app.use(cors());
+
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 app.use(express.json());
 const authRoutes = require("./routes/auth");
 const adminRoutes = require("./routes/admin");
