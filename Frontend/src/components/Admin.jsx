@@ -9,11 +9,11 @@ function Admin() {
     const [activeTab, setActiveTab] = useState('dashboard');
     // Sample data for project time tracking
     const projectTimeData = [
-        { name: 'E-Commerce Website', hours: 245, color: '#FF6B00' },
-        { name: 'Mobile App Development', hours: 189, color: '#FF8C3A' },
-        { name: 'CRM System', hours: 156, color: '#FFB366' },
-        { name: 'Marketing Campaign', hours: 98, color: '#FFC999' },
-        { name: 'Database Migration', hours: 134, color: '#FFDAB3' }
+        { name : 'E-Commerce Website',     hours : 245, color : '#FF6B00' },
+        { name : 'Mobile App Development', hours: 189,  color: '#FF8C3A' },
+        { name : 'CRM System',             hours: 156,  color: '#FFB366' },
+        { name : 'Marketing Campaign',     hours: 98,   color: '#FFC999' },
+        { name : 'Database Migration',     hours: 134,  color: '#FFDAB3' }
     ];
 
     // Data for weekly trend

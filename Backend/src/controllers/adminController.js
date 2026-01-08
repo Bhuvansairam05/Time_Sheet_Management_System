@@ -1,26 +1,21 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
-
-
 const addUser = async (req, res) => {
-  const { name, email, password, role, status, is_manager } = req.body;
-
+  const { name, email, password, role, status, is_manager,reporting_to } = req.body;
   const existingUser = await User.findOne({ email });
   if (existingUser) {
     return res.status(400).json({ message: "User already exists" });
   }
-
   const hashedPassword = await bcrypt.hash(password, 10);
-
   await User.create({
     name,
     email,
     password: hashedPassword,
     role,
     status,
-    is_manager
+    is_manager,
+    reporting_to
   });
-
   res.status(201).json({
     success: true,
     message: "User added successfully"
@@ -75,5 +70,4 @@ const removeUser = async (req, res) => {
     message: "User removed successfully"
   });
 };
-
 module.exports = { addUser, updateUser, removeUser };

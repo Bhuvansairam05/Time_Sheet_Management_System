@@ -69,6 +69,16 @@ const loginUser = async (req, res) => {
     process.env.JWT_SECRET,
     { expiresIn: "1d" }
   );
+  if(user.role=="admin"){
+    const users = await User.find({role:"employee"});
+    res.status(200).json({
+      success:true,
+      message:"Login successful",
+      token,
+      user,
+      users
+    })
+  }
   res.status(200).json({
     success: true,
     message: "Login successful",

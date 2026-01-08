@@ -61,6 +61,7 @@ function LoginModal({ isOpen, onClose }) {
         localStorage.setItem("token", result.token);
         localStorage.setItem("role", role);
         if (role === "admin") {
+          console.log(result);
           navigate("/admin/dashboard");
         } else if (is_manager) {
           navigate("/manager/dashboard");
