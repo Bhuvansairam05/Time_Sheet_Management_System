@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import LoginModal from './LoginModal';
+import logo from '../assets/Logo_remove.png';
 function Home() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
 
@@ -11,7 +12,7 @@ function Home() {
     <div className="min-h-screen bg-white overflow-x-hidden">
       {/* Header */}
       <header className="fixed top-0 left-0 w-full bg-white shadow-md z-50 overflow-hidden">
-        <nav className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
+        {/* <nav className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
           <div className="text-xl sm:text-2xl md:text-3xl font-bold text-orange-600 whitespace-nowrap">TimeTrack Pro</div>
           <ul className="flex gap-2 sm:gap-4 md:gap-8 items-center text-xs sm:text-sm md:text-base">
             <li className="hidden sm:block"><a href="#features" className="text-gray-700 hover:text-orange-600 transition whitespace-nowrap">Features</a></li>
@@ -19,7 +20,49 @@ function Home() {
             <li className="hidden md:block"><a href="#contact" className="text-gray-700 hover:text-orange-600 transition whitespace-nowrap">Contact</a></li>
             <li><button onClick={openLoginModal} className="bg-orange-600 text-white px-3 sm:px-4 md:px-6 py-2 rounded-lg hover:bg-orange-700 transition whitespace-nowrap">Login</button></li>
           </ul>
-        </nav>
+        </nav> */}
+        <nav className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
+  
+  {/* Logo + Brand */}
+  <div className="flex items-center gap-2 whitespace-nowrap">
+    <img
+      src={logo}
+      alt="TimeTrack Pro Logo"
+      className="h-6 sm:h-7 md:h-8 w-auto object-contain"
+    />
+    <span className="text-xl sm:text-2xl md:text-3xl font-bold text-orange-600">
+      TimeTrack Pro
+    </span>
+  </div>
+
+  {/* Nav Links */}
+  <ul className="flex gap-2 sm:gap-4 md:gap-8 items-center text-xs sm:text-sm md:text-base">
+    <li className="hidden sm:block">
+      <a href="#features" className="text-gray-700 hover:text-orange-600 transition whitespace-nowrap">
+        Features
+      </a>
+    </li>
+    <li className="hidden md:block">
+      <a href="#about" className="text-gray-700 hover:text-orange-600 transition whitespace-nowrap">
+        About
+      </a>
+    </li>
+    <li className="hidden md:block">
+      <a href="#contact" className="text-gray-700 hover:text-orange-600 transition whitespace-nowrap">
+        Contact
+      </a>
+    </li>
+    <li>
+      <button
+        onClick={openLoginModal}
+        className="bg-orange-600 text-white px-3 sm:px-4 md:px-6 py-2 rounded-lg hover:bg-orange-700 transition whitespace-nowrap"
+      >
+        Login
+      </button>
+    </li>
+  </ul>
+</nav>
+
       </header>
 
       {/* Hero Section */}

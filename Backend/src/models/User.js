@@ -23,6 +23,10 @@ const UserSchema = new mongoose.Schema({
     is_manager:{
         type:Boolean,
         required:true
+    },
+    reporting_to:{
+        type:mongoose.Schema.Types.ObjectId,
+        ref:"User"
     }
 },{timestamps:true});
 module.exports = mongoose.model("User",UserSchema);

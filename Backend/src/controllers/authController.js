@@ -62,4 +62,11 @@ const getUser = async (req, res) => {
     response: user
   });
 };
-module.exports = {loginUser, getUser};
+
+const logoutUser = async (req, res) => {
+  return res.status(200).json({
+    success: true,
+    message: "Logout successful"
+  });
+}
+module.exports = { loginUser, getUser, logoutUser };
