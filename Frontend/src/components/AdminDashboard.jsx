@@ -16,7 +16,6 @@ function AdminDashboard() {
     { name: 'Marketing Campaign', hours: 98 },
     { name: 'Database Migration', hours: 134 }
   ];
-
   const weeklyTrendData = [
     { day: 'Mon', hours: 45 },
     { day: 'Tue', hours: 52 },
