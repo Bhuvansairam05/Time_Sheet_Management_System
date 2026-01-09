@@ -1,36 +1,27 @@
 import { useState } from "react";
-
 function AddUserModal({ isOpen, onClose, onSubmit }) {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     password: "",
     role: "employee",
-    status: "not_in_project",
-    is_manager: false,
-    reporting_to: "",
+    is_manager: false
   });
-
   if (!isOpen) return null;
-
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
     }));
   };
-
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(formData);
   };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white w-full max-w-lg rounded-xl shadow-xl p-6">
-        {/* Header */}
         <div className="flex justify-between items-center mb-4">
           <h2 className="text-xl font-bold text-gray-800">Add User</h2>
           <button
@@ -40,10 +31,7 @@ function AddUserModal({ isOpen, onClose, onSubmit }) {
             ✕
           </button>
         </div>
-
-        {/* Form */}
         <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Name */}
           <input
             type="text"
             name="name"
@@ -53,8 +41,6 @@ function AddUserModal({ isOpen, onClose, onSubmit }) {
             required
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-600"
           />
-
-          {/* Email */}
           <input
             type="email"
             name="email"
@@ -64,8 +50,6 @@ function AddUserModal({ isOpen, onClose, onSubmit }) {
             required
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-600"
           />
-
-          {/* Password */}
           <input
             type="password"
             name="password"
@@ -75,8 +59,6 @@ function AddUserModal({ isOpen, onClose, onSubmit }) {
             required
             className="w-full px-4 py-2 border rounded-lg focus:outline-none focus:border-orange-600"
           />
-
-          {/* Role */}
           <select
             name="role"
             value={formData.role}
@@ -86,19 +68,6 @@ function AddUserModal({ isOpen, onClose, onSubmit }) {
             <option value="employee">Employee</option>
             <option value="admin">Admin</option>
           </select>
-
-          {/* Status */}
-          <select
-            name="status"
-            value={formData.status}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-lg"
-          >
-            <option value="in_project">In Project</option>
-            <option value="not_in_project">Not In Project</option>
-          </select>
-
-          {/* Is Manager */}
           <label className="flex items-center gap-2 text-sm text-gray-700">
             <input
               type="checkbox"
@@ -108,18 +77,6 @@ function AddUserModal({ isOpen, onClose, onSubmit }) {
             />
             Is Manager
           </label>
-
-          {/* Reporting To */}
-          <input
-            type="text"
-            name="reporting_to"
-            placeholder="Reporting To (User ID)"
-            value={formData.reporting_to}
-            onChange={handleChange}
-            className="w-full px-4 py-2 border rounded-lg"
-          />
-
-          {/* Actions */}
           <div className="flex justify-end gap-3 pt-4">
             <button
               type="button"
@@ -140,5 +97,4 @@ function AddUserModal({ isOpen, onClose, onSubmit }) {
     </div>
   );
 }
-
 export default AddUserModal;

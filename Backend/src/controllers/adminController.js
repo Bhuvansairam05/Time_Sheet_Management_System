@@ -1,7 +1,10 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const addUser = async (req, res) => {
-  const { name, email, password, role, status, is_manager,reporting_to } = req.body;
+  try{
+  const { name, email, password, role, is_manager} = req.body;
+  const status = "not in project";
+  const reporting_to = null;
   const existingUser = await User.findOne({ email });
   if (existingUser) {
     return res.status(400).json({ message: "User already exists" });
@@ -16,14 +19,19 @@ const addUser = async (req, res) => {
     is_manager,
     reporting_to
   });
-  res.status(201).json({
+  return res.status(201).json({
     success: true,
     message: "User added successfully"
   });
+}
+catch(Exception){
+  return res.status(500).json({message:"500 server not found"});
+}
 };
 const updateUser = async (req, res) => {
+  try{
   const { userId } = req.params;
-  const { name, email, password, role, status, is_manager } = req.body;
+  const { name, email, password, role, status, is_manager, reporting_to } = req.body;
 
   const user = await User.findById(userId);
   if (!user) {
@@ -32,13 +40,13 @@ const updateUser = async (req, res) => {
       message: "User not found"
     });
   }
-
   // Update fields only if provided
   if (name) user.name = name;
   if (email) user.email = email;
   if (role) user.role = role;
   if (status) user.status = status;
   if (typeof is_manager === "boolean") user.is_manager = is_manager;
+  if(reporting_to) user.reporting_to = reporting_to;
 
   // If password is updated, hash it again
   if (password) {
@@ -47,12 +55,17 @@ const updateUser = async (req, res) => {
 
   await user.save();
 
-  res.status(200).json({
+  return res.status(200).json({
     success: true,
     message: "User updated successfully"
   });
+}
+catch(Exception){
+  return res.status(500).json({message:"500 server not found"});
+}
 };
 const removeUser = async (req, res) => {
+  try{
   const { userId } = req.params;
 
   const user = await User.findById(userId);
@@ -65,9 +78,13 @@ const removeUser = async (req, res) => {
 
   await User.findByIdAndDelete(userId);
 
-  res.status(200).json({
+  return res.status(200).json({
     success: true,
     message: "User removed successfully"
   });
+}
+catch(Exception){
+  return res.status(500).json({message:"500 server not found"});
+}
 };
 module.exports = { addUser, updateUser, removeUser };

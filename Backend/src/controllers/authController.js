@@ -6,6 +6,7 @@ const { OAuth2Client } = require("google-auth-library");
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const googleLogin = async (req, res) => {
+  try{ 
   const { token } = req.body;
 
   const ticket = await client.verifyIdToken({
@@ -34,12 +35,18 @@ const googleLogin = async (req, res) => {
     { expiresIn: "1d" }
   );
 
-  res.status(200).json({
+  return res.status(200).json({
     token: jwtToken,
     user,
   });
+}
+catch(Exception){
+  return res.status(500).json("500 Server not found");
+}
 };
+
 const loginUser = async (req, res) => {
+  try{ 
   const { email, password } = req.body;
 
   if (!email || !password) {
@@ -53,7 +60,7 @@ const loginUser = async (req, res) => {
   if (!user) {
     return res.status(404).json({
       success: false,
-      message: "Invalid credentials"
+      message: "No existing user"
     });
   }
 
@@ -71,15 +78,14 @@ const loginUser = async (req, res) => {
   );
   if(user.role=="admin"){
     const users = await User.find({role:"employee"});
-    res.status(200).json({
+    return res.status(200).json({
       success:true,
       message:"Login successful",
       token,
-      user,
-      users
+      user
     })
   }
-  res.status(200).json({
+  return res.status(200).json({
     success: true,
     message: "Login successful",
     token,
@@ -91,8 +97,13 @@ const loginUser = async (req, res) => {
       is_manager: user.is_manager
     }
   });
+  }
+  catch(Exception){
+    return res.status(500).json("500 server not found");
+  }
 };
 const getUser = async (req, res) => {
+  try{ 
   const { userId } = req.params;
 
   const user = await User.findById(userId);
@@ -108,12 +119,36 @@ const getUser = async (req, res) => {
     success: true,
     response: user
   });
+}
+catch(Exception){
+  return res.status(500).json({message:"500 server not found"});
+}
 };
 
 const logoutUser = async (req, res) => {
+  try{ 
   return res.status(200).json({
     success: true,
     message: "Logout successful"
   });
 }
-module.exports = { loginUser, getUser, logoutUser,googleLogin };
+catch(Exception){
+  return res.status(500).json({message:"500 server not found"});
+}
+}
+const getEmployees = async (req,res)=>{
+  try{
+  const employees = await User.find({role:"employee"}).select("-password").lean();
+  if(!employees){
+    return res.status(404).json({message:"No employees in organisation"});
+  }
+  return res.status(200).json({
+    success:true,
+    data:employees
+  });
+}
+catch(Exception){
+  return res.status(500).json({message:"500 server not found"});
+}
+}
+module.exports = { loginUser, getUser, logoutUser,googleLogin,getEmployees};

@@ -1,9 +1,10 @@
 const express = require("express");
 const authenticate = require("../middleware/authMiddleware");
-const {loginUser, getUser,logoutUser,googleLogin} = require("../controllers/authController.js");
+const {loginUser, getUser,logoutUser,googleLogin, getEmployees} = require("../controllers/authController.js");
 const router = express.Router();
 router.post("/login",loginUser);
 router.get("/getUser/:userId", getUser);
 router.delete("/logout",logoutUser);
 router.post("/google",googleLogin);
+router.get("/getEmployees",getEmployees);
 module.exports = router;

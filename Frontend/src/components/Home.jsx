@@ -106,12 +106,13 @@ function Home() {
           
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
             {/* Employee Features */}
-            <div className="bg-orange-50 p-6 sm:p-8 rounded-lg border-2 border-orange-200 hover:border-orange-600 transition">
-              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-orange-600 rounded-full flex items-center justify-center mb-4 sm:mb-6">
+            <div className=" bg-orange-50 p-6 sm:p-8 rounded-lg border-2 border-orange-200 hover:border-orange-600 transition">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-orange-600 rounded-full flex items-center justify-center mb-4 sm:mb-6 mx-auto">
                 <span className="text-2xl sm:text-3xl text-white">👤</span>
               </div>
               <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-800">Employee Access</h3>
-              <ul className="space-y-2 sm:space-y-3 text-sm sm:text-base text-gray-700">
+              <div className='flex justify-center'>
+                <ul className="space-y-2 sm:space-y-3 text-sm sm:text-base text-gray-700">
                 <li className="flex items-start">
                   <span className="text-orange-600 mr-2">✓</span>
                   <span>Check-in and check-out functionality</span>
@@ -129,15 +130,17 @@ function Home() {
                   <span>Track time spent on tasks</span>
                 </li>
               </ul>
+              </div>
             </div>
 
             {/* Manager Features */}
             <div className="bg-orange-50 p-6 sm:p-8 rounded-lg border-2 border-orange-200 hover:border-orange-600 transition">
-              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-orange-600 rounded-full flex items-center justify-center mb-4 sm:mb-6">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-orange-600 rounded-full flex items-center justify-center mb-4 sm:mb-6 mx-auto">
                 <span className="text-2xl sm:text-3xl text-white">👨‍💼</span>
               </div>
               <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-800">Manager Access</h3>
-              <ul className="space-y-2 sm:space-y-3 text-sm sm:text-base text-gray-700">
+              <div className='flex justify-center'>
+                <ul className="space-y-2 sm:space-y-3 text-sm sm:text-base text-gray-700">
                 <li className="flex items-start">
                   <span className="text-orange-600 mr-2">✓</span>
                   <span>View assigned employees</span>
@@ -155,15 +158,17 @@ function Home() {
                   <span>Monitor team productivity</span>
                 </li>
               </ul>
+              </div>
             </div>
 
             {/* Admin Features */}
             <div className="bg-orange-50 p-6 sm:p-8 rounded-lg border-2 border-orange-200 hover:border-orange-600 transition sm:col-span-2 lg:col-span-1">
-              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-orange-600 rounded-full flex items-center justify-center mb-4 sm:mb-6">
+              <div className="w-14 h-14 sm:w-16 sm:h-16 bg-orange-600 rounded-full flex items-center justify-center mb-4 sm:mb-6 mx-auto">
                 <span className="text-2xl sm:text-3xl text-white">⚙️</span>
               </div>
               <h3 className="text-xl sm:text-2xl font-bold mb-3 sm:mb-4 text-gray-800">Admin Control</h3>
-              <ul className="space-y-2 sm:space-y-3 text-sm sm:text-base text-gray-700">
+              <div className="flex justify-center">
+                <ul className="space-y-2 sm:space-y-3 text-sm sm:text-base text-gray-700">
                 <li className="flex items-start">
                   <span className="text-orange-600 mr-2">✓</span>
                   <span>Add and manage projects</span>
@@ -181,6 +186,7 @@ function Home() {
                   <span>Generate comprehensive reports</span>
                 </li>
               </ul>
+              </div>
             </div>
           </div>
         </div>
