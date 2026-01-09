@@ -3,17 +3,25 @@ import { useNavigate } from "react-router-dom";
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell, LineChart, Line } from 'recharts';
 import LogoutConfirmModal from './LogoutConfirmModal.jsx';
 import logo from '../assets/Logo_remove.png';
+import { useLocation } from "react-router-dom";
+import AddUserModal from "./AddUserModal";
+
 function Admin() {
     const navigate = useNavigate();
     const [showLogoutModal, setShowLogoutModal] = useState(false);
     const [activeTab, setActiveTab] = useState('dashboard');
+    const [showAddUserModal, setShowAddUserModal] = useState(false);
+    const { state } = useLocation();
+
+    const user = state?.user;
+    const users = state?.users;
     // Sample data for project time tracking
     const projectTimeData = [
-        { name : 'E-Commerce Website',     hours : 245, color : '#FF6B00' },
-        { name : 'Mobile App Development', hours: 189,  color: '#FF8C3A' },
-        { name : 'CRM System',             hours: 156,  color: '#FFB366' },
-        { name : 'Marketing Campaign',     hours: 98,   color: '#FFC999' },
-        { name : 'Database Migration',     hours: 134,  color: '#FFDAB3' }
+        { name: 'E-Commerce Website', hours: 245, color: '#FF6B00' },
+        { name: 'Mobile App Development', hours: 189, color: '#FF8C3A' },
+        { name: 'CRM System', hours: 156, color: '#FFB366' },
+        { name: 'Marketing Campaign', hours: 98, color: '#FFC999' },
+        { name: 'Database Migration', hours: 134, color: '#FFDAB3' }
     ];
 
     // Data for weekly trend
@@ -46,6 +54,46 @@ function Admin() {
         setShowLogoutModal(false);
         navigate("/");
     }
+   const handleAddUser = async (userData) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    const response = await fetch("http://localhost:5000/api/admin/addUser", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        name: userData.name,
+        email: userData.email,
+        password: userData.password,
+        role: userData.role,
+        status: userData.status,
+        is_manager: userData.is_manager,
+        reporting_to: userData.reporting_to || null,
+      }),
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+      console.log("User added successfully:", result);
+
+      // OPTIONAL (later you can refetch users)
+      // setUsers((prev) => [...prev, result.user]);
+
+      setShowAddUserModal(false);
+    } else {
+      console.error("Failed to add user:", result.message);
+      alert(result.message || "Failed to add user");
+    }
+  } catch (error) {
+    console.error("Error adding user:", error);
+    alert("Something went wrong while adding user");
+  }
+};
+
 
 
     return (
@@ -275,9 +323,86 @@ function Admin() {
                 )}
 
                 {activeTab === 'users' && (
-                    <div className="bg-white rounded-lg shadow-md p-6 overflow-y-hidden">
-                        <h2 className="text-2xl font-bold text-gray-800 mb-4">Users Management</h2>
-                        <p className="text-gray-600">Users management section will be implemented here.</p>
+                    <div className="bg-white rounded-lg shadow-md p-6">
+                        {/* Header */}
+                        <div className="flex justify-between items-center mb-6">
+                            <h2 className="text-2xl font-bold text-gray-800">Users</h2>
+
+                            <button
+                                className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition font-medium"
+                                onClick={() => setShowAddUserModal(true)}
+                            >
+                                + Add User
+                            </button>
+                        </div>
+
+                        {/* Users Table */}
+                        <div className="overflow-x-auto">
+                            <table className="min-w-full border border-gray-200 rounded-lg overflow-hidden">
+                                <thead className="bg-gray-100">
+                                    <tr>
+                                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">S.No</th>
+                                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Name</th>
+                                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Is Manager</th>
+                                        <th className="px-4 py-3 text-left text-sm font-semibold text-gray-600">Status</th>
+                                        <th className="px-4 py-3 text-center text-sm font-semibold text-gray-600">View Sheet</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody className="divide-y divide-gray-200">
+                                    {users && users.length > 0 ? (
+                                        users.map((u, index) => {
+                                            const status = "not_in_project"; // temporary
+
+                                            return (
+                                                <tr key={u._id} className="hover:bg-gray-50 transition">
+                                                    <td className="px-4 py-3 text-sm text-left align-top">{index + 1}</td>
+
+                                                    <td className="px-4 py-3 text-sm font-medium text-gray-800 text-left align-top">
+                                                        {u.name}
+                                                    </td>
+
+                                                    <td className="px-4 py-3 text-sm text-left align-top">
+                                                        {u.is_manager ? (
+                                                            <span className="text-green-600 font-semibold">Yes</span>
+                                                        ) : (
+                                                            <span className="text-gray-600">No</span>
+                                                        )}
+                                                    </td>
+
+                                                    <td className="px-4 py-3 text-sm text-left align-top">
+                                                        {status === "in_project" ? (
+                                                            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-orange-100 text-orange-700">
+                                                                In Project
+                                                            </span>
+                                                        ) : (
+                                                            <span className="px-3 py-1 rounded-full text-xs font-semibold bg-green-100 text-green-700">
+                                                                Not In Project
+                                                            </span>
+                                                        )}
+                                                    </td>
+
+                                                    <td className="px-4 py-3 ">
+                                                        <button
+                                                            className="px-3 py-1.5 text-sm rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
+                                                            onClick={() => navigate(`/admin/user/${u._id}`)}
+                                                        >
+                                                            View Sheet
+                                                        </button>
+                                                    </td>
+                                                </tr>
+                                            );
+                                        })
+                                    ) : (
+                                        <tr>
+                                            <td colSpan="5" className="text-center py-6 text-gray-500">
+                                                No users found
+                                            </td>
+                                        </tr>
+                                    )}
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 )}
 
@@ -293,8 +418,15 @@ function Admin() {
                 onClose={() => setShowLogoutModal(false)}
                 onConfirm={confirmLogout}
             />
-
+             <AddUserModal
+  isOpen={showAddUserModal}
+  onClose={() => setShowAddUserModal(false)}
+  onSubmit={handleAddUser}
+/>
         </div>
+       
     );
+    
+
 }
 export default Admin;

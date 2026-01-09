@@ -62,7 +62,11 @@ function LoginModal({ isOpen, onClose }) {
         localStorage.setItem("role", role);
         if (role === "admin") {
           console.log(result);
-          navigate("/admin/dashboard");
+          navigate("/admin/dashboard", {
+            state: {
+              user: result.user,
+              users: result.users,
+            }});
         } else if (is_manager) {
           navigate("/manager/dashboard");
         } else {
@@ -79,49 +83,49 @@ function LoginModal({ isOpen, onClose }) {
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword);
   };
-    
 
-const handleGoogleSignin = () => {
-  /* global google */
-  google.accounts.id.initialize({
-    client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
-    callback: handleGoogleResponse,
-    ux_mode: "popup",
-    use_fedcm_for_prompt: false, // 🔥 THIS FIXES YOUR ERROR
-  });
 
-  google.accounts.id.prompt(); // opens popup
-};
-  const handleGoogleResponse = async (response) => {
-  try {
-    const res = await fetch("http://localhost:5000/api/auth/google", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        token: response.credential,
-      }),
+  const handleGoogleSignin = () => {
+    /* global google */
+    google.accounts.id.initialize({
+      client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+      callback: handleGoogleResponse,
+      ux_mode: "popup",
+      use_fedcm_for_prompt: false, // 🔥 THIS FIXES YOUR ERROR
     });
 
-    const data = await res.json();
+    google.accounts.id.prompt(); // opens popup
+  };
+  const handleGoogleResponse = async (response) => {
+    try {
+      const res = await fetch("http://localhost:5000/api/auth/google", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          token: response.credential,
+        }),
+      });
 
-    if (res.ok) {
-      localStorage.setItem("token", data.token);
-      localStorage.setItem("role", data.user.role);
+      const data = await res.json();
 
-      if (data.user.role === "admin") {
-        navigate("/admin/dashboard");
-      } else if (data.user.is_manager) {
-        navigate("/manager/dashboard");
-      } else {
-        navigate("/employee/dashboard");
+      if (res.ok) {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("role", data.user.role);
+
+        if (data.user.role === "admin") {
+          navigate("/admin/dashboard");
+        } else if (data.user.is_manager) {
+          navigate("/manager/dashboard");
+        } else {
+          navigate("/employee/dashboard");
+        }
       }
+    } catch (err) {
+      console.error(err);
     }
-  } catch (err) {
-    console.error(err);
-  }
-};
+  };
 
   if (!isOpen) return null;
   return (
