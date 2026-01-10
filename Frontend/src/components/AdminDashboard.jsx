@@ -6,8 +6,7 @@ import {
 import { useState } from 'react';
 import Loader from './Loader.jsx';
 import toast from "react-hot-toast";
-function AdminDashboard() {
-  
+function AdminDashboard() {  
     const [loading, setLoading] = useState(false);
   const projectTimeData = [
     { name: 'E-Commerce Website', hours: 245 },
