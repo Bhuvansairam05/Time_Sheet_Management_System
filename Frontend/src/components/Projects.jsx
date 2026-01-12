@@ -1,4 +1,7 @@
+import { useState } from "react";
+
 function Projects() {
+  const [projects, setProjects ] = useState([]);
   const handleAddProject = () => {
     console.log('Add Project clicked');
   };
@@ -17,14 +20,6 @@ function Projects() {
     }
   };
 
-  const projects = [
-    { id: 1, name: 'E-Commerce Website', managedBy: 'yashwanth' },
-    { id: 2, name: 'Mobile App Development', managedBy: 'yashwanth' },
-    { id: 3, name: 'CRM System', managedBy: 'yashwanth' },
-    { id: 4, name: 'Marketing Campaign', managedBy: 'yashwanth' },
-    { id: 5, name: 'Database Migration', managedBy: 'yashwanth' },
-    { id: 6, name: 'Cloud Infrastructure Setup', managedBy: 'yashwanth' }
-  ];
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
@@ -67,6 +62,7 @@ function Projects() {
           </thead>
 
           <tbody className="divide-y divide-gray-200">
+            {(projects.length===0)}
             {projects.map((project, index) => (
               <tr key={project.id} className="hover:bg-gray-50 transition">
                 <td className="px-4 py-3 text-sm text-gray-800">
