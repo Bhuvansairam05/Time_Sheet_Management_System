@@ -1,43 +1,52 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
-function AddUserModal({ isOpen, onClose, onSubmit, managers }) {
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    password: "",
-    role: "employee",
-    is_manager: false,
-    reporting_to: "",
-  });
+function EditUserModal({ isOpen, onClose, user, managers, onUpdate }) {
+  const [formData, setFormData] = useState(null);
+  const [isDirty, setIsDirty] = useState(false);
+  useEffect(() => {
+    if (user) {
+      setFormData({
+        name: user.name || "",
+        email: user.email || "",
+        role: user.role || "employee",
+        is_manager: user.is_manager || false,
+        reporting_to: user.reporting_to || "",
+      });
+      setIsDirty(false);
+    }
+  }, [user]);
 
-  if (!isOpen) return null;
+  if (!isOpen || !formData) return null;
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-      ...(name === "is_manager" && checked ? { reporting_to: "" } : {}),
-    }));
+    const updatedValue = type === "checkbox" ? checked : value;
+
+    setFormData((prev) => {
+      const updated = { ...prev, [name]: updatedValue };
+
+      // if manager checked, clear reporting_to
+      if (name === "is_manager" && checked) {
+        updated.reporting_to = "";
+      }
+
+      return updated;
+    });
+
+    setIsDirty(true); // 🔥 enable Update button
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    const payload = {
-      ...formData,
-      reporting_to: formData.is_manager ? null : formData.reporting_to,
-    };
-
-    onSubmit(payload);
+    onUpdate(formData); // NEXT STEP: API
   };
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white w-full max-w-lg rounded-xl shadow-xl p-6">
         <div className="flex justify-between items-center mb-4">
-          <h2 className="text-xl font-bold text-gray-800">Add User</h2>
+          <h2 className="text-xl font-bold text-gray-800">Edit User</h2>
           <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
             ✕
           </button>
@@ -47,30 +56,16 @@ function AddUserModal({ isOpen, onClose, onSubmit, managers }) {
           <input
             type="text"
             name="name"
-            placeholder="Name"
             value={formData.name}
             onChange={handleChange}
-            required
             className="w-full px-4 py-2 border rounded-lg"
           />
 
           <input
             type="email"
             name="email"
-            placeholder="Email"
             value={formData.email}
             onChange={handleChange}
-            required
-            className="w-full px-4 py-2 border rounded-lg"
-          />
-
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            value={formData.password}
-            onChange={handleChange}
-            required
             className="w-full px-4 py-2 border rounded-lg"
           />
 
@@ -99,30 +94,43 @@ function AddUserModal({ isOpen, onClose, onSubmit, managers }) {
               name="reporting_to"
               value={formData.reporting_to}
               onChange={handleChange}
-              required
               className="w-full px-4 py-2 border rounded-lg"
             >
               <option value="">Select Manager</option>
-              {managers.length === 0 ? (
-                <option value="" className="text-sm text-red-500">
+
+              {(managers.length === 0 || (managers.length === 1 && managers[0]._id === user._id)) ? (
+                <option disabled>
                   First add managers, there are no managers in the organisation
                 </option>
               ) : (
-                managers.map((m) => (
-                  <option key={m._id} value={m._id}>
-                    {m.name}
-                  </option>
-                ))
+                managers
+                  .filter(m => m._id !== user._id) // ❌ remove self
+                  .map(m => (
+                    <option key={m._id} value={m._id}>
+                      {m.name}
+                    </option>
+                  ))
               )}
             </select>
           )}
 
           <div className="flex justify-end gap-3 pt-4">
-            <button type="button" onClick={onClose} className="px-4 py-2 border rounded-lg">
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 border rounded-lg"
+            >
               Cancel
             </button>
-            <button type="submit" className="px-4 py-2 bg-orange-600 text-white rounded-lg">
-              Add User
+
+            <button
+              type="submit"
+              disabled={!isDirty}
+              className={`px-4 py-2 rounded-lg text-white
+                ${isDirty ? "bg-orange-600 hover:bg-orange-700" : "bg-gray-400 cursor-not-allowed"}
+              `}
+            >
+              Update
             </button>
           </div>
         </form>
@@ -131,4 +139,4 @@ function AddUserModal({ isOpen, onClose, onSubmit, managers }) {
   );
 }
 
-export default AddUserModal;
+export default EditUserModal;
