@@ -1,25 +1,55 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 function Projects() {
-  const [projects, setProjects ] = useState([]);
-  const handleAddProject = () => {
-    console.log('Add Project clicked');
-  };
+  const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  const handleView = (projectId, projectName) => {
-    console.log('View project:', projectId, projectName);
-  };
+  const fetchProjects = async () => {
+  try {
+    setLoading(true);
 
-  const handleEdit = (projectId, projectName) => {
-    console.log('Edit project:', projectId, projectName);
-  };
+    const token = localStorage.getItem("token"); // or adminToken
 
-  const handleDelete = (projectId, projectName) => {
-    if (window.confirm(`Are you sure you want to delete "${projectName}"?`)) {
-      console.log('Delete project:', projectId);
+    const res = await fetch("http://localhost:5000/api/admin/getProjects", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const result = await res.json();
+
+    if (result.success) {
+      setProjects(result.data);
+    } else {
+      setProjects([]);
     }
+  } catch (error) {
+    console.error("Error fetching projects:", error);
+  } finally {
+    setLoading(false);
+  }
+};
+
+
+  useEffect(() => {
+    fetchProjects();
+  }, []);
+
+  const handleAddProject = async () => {
+    console.log("Add Project clicked");
+    // after successful add project API call
+    fetchProjects();
   };
 
+  const handleEdit = (projectId) => {
+    console.log("Edit project:", projectId);
+  };
+
+  const handleDelete = async (projectId, projectName) => {
+    console.log("Deleted successfully");
+  };
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
@@ -37,7 +67,7 @@ function Projects() {
 
       {/* Table */}
       <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-200 rounded-lg overflow-hidden">
+        <table className="min-w-full border border-gray-200 rounded-lg">
           <thead className="bg-gray-100">
             <tr>
               <th className="px-4 py-3 text-sm font-semibold text-gray-600">
@@ -49,8 +79,8 @@ function Projects() {
               <th className="px-4 py-3 text-sm font-semibold text-gray-600">
                 Managed By
               </th>
-              <th className="px-4 py-3 text-center text-sm font-semibold text-gray-600">
-                View
+              <th className="px-4 py-3 text-sm font-semibold text-gray-600">
+                Time Spent
               </th>
               <th className="px-4 py-3 text-center text-sm font-semibold text-gray-600">
                 Edit
@@ -62,49 +92,68 @@ function Projects() {
           </thead>
 
           <tbody className="divide-y divide-gray-200">
-            {(projects.length===0)}
-            {projects.map((project, index) => (
-              <tr key={project.id} className="hover:bg-gray-50 transition">
-                <td className="px-4 py-3 text-sm text-gray-800">
-                  {index + 1}
-                </td>
-
-                <td className="px-4 py-3 text-sm font-medium text-gray-800">
-                  {project.name}
-                </td>
-
-                <td className="px-4 py-3 text-sm text-gray-700">
-                  {project.managedBy}
-                </td>
-
-                <td className="px-4 py-3 text-center">
-                  <button
-                    onClick={() => handleView(project.id, project.name)}
-                    className="px-3 py-1.5 text-sm rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition"
-                  >
-                    View
-                  </button>
-                </td>
-
-                <td className="px-4 py-3 text-center">
-                  <button
-                    onClick={() => handleEdit(project.id, project.name)}
-                    className="px-3 py-1.5 text-sm rounded-lg bg-green-600 text-white hover:bg-green-700 transition"
-                  >
-                    Edit
-                  </button>
-                </td>
-
-                <td className="px-4 py-3 text-center">
-                  <button
-                    onClick={() => handleDelete(project.id, project.name)}
-                    className="px-3 py-1.5 text-sm rounded-lg bg-red-600 text-white hover:bg-red-700 transition"
-                  >
-                    Delete
-                  </button>
+            {loading && (
+              <tr>
+                <td colSpan="6" className="text-center py-6 text-gray-500">
+                  Loading projects...
                 </td>
               </tr>
-            ))}
+            )}
+
+            {!loading && projects.length === 0 && (
+              <tr>
+                <td colSpan="6" className="text-center py-6 text-gray-500">
+                  No projects found
+                </td>
+              </tr>
+            )}
+
+            {!loading &&
+              projects.map((project, index) => (
+                <tr
+                  key={project.project_id}
+                  className="hover:bg-gray-50 transition"
+                >
+                  <td className="px-4 py-3 text-sm text-gray-800">
+                    {index + 1}
+                  </td>
+
+                  <td className="px-4 py-3 text-sm font-medium text-gray-800">
+                    {project.project_name}
+                  </td>
+
+                  <td className="px-4 py-3 text-sm text-gray-700">
+                    {project.manager_name}
+                  </td>
+
+                  <td className="px-4 py-3 text-sm text-gray-700">
+                    0 hrs
+                  </td>
+
+                  <td className="px-4 py-3 text-center">
+                    <button
+                      onClick={() => handleEdit(project.project_id)}
+                      className="px-3 py-1.5 text-sm rounded-lg bg-green-600 text-white hover:bg-green-700 transition"
+                    >
+                      Edit
+                    </button>
+                  </td>
+
+                  <td className="px-4 py-3 text-center">
+                    <button
+                      onClick={() =>
+                        handleDelete(
+                          project.project_id,
+                          project.project_name
+                        )
+                      }
+                      className="px-3 py-1.5 text-sm rounded-lg bg-red-600 text-white hover:bg-red-700 transition"
+                    >
+                      Delete
+                    </button>
+                  </td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>

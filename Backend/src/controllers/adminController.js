@@ -145,7 +145,7 @@ const addProject = async (req, res) => {
       message: "Internal server error",
     });
   }
-}
+};
 const getProjects = async(req,res)=>{
   try {
     const projects = await Project.find()
@@ -168,7 +168,7 @@ const getProjects = async(req,res)=>{
       message: "Internal server error",
     });
   }
-}
+};
 const endProject = async (req, res) => {
   try {
     const { projectId } = req.params;
@@ -204,7 +204,6 @@ const endProject = async (req, res) => {
     });
   }
 };
-
 const deleteProject = async (req, res) => { }
 const updateProject = async (req, res) => { }
 module.exports = { addUser, updateUser, removeUser, getProjects, addProject, deleteProject, updateProject, endProject };
