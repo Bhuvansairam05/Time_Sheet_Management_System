@@ -90,7 +90,7 @@ const getUsersTimeSummary = async (req, res) => {
   }
 };
 /* ===============================
-   2️⃣ EMPLOYEE → PROJECT DETAILS
+   2️⃣ EMPLOYEE → PROJECT DETAILSAXZ
 ================================ */
 const getEmployeeProjectDetails = async (req, res) => {
   try {
@@ -406,19 +406,17 @@ const addTimeSheet = async(req,res)=>{
 }
 const getManagerEmployeesTimeSummary = async (req, res) => {
   try {
-    const managerId = req.user._id;
+    const managerId = req.user.userId;
     const { filter, from, to } = req.query;
     const { start, end } = getDateRange(filter, from, to);
-    console.log("Manager from token:", req.user._id);
-
     // 1️⃣ Get employees reporting to this manager
     const employees = await User.find(
-      { reporting_to: managerId },
-      { name: 1 }
+      { reporting_to: managerId }
     );
-
+    if (!employees.length) {
+      return res.json({ success: true, data: [] });
+    }
     const employeeIds = employees.map(e => e._id);
-
     // 2️⃣ Aggregate timesheets
     const timeData = await Timesheet.aggregate([
       {
@@ -441,45 +439,40 @@ const getManagerEmployeesTimeSummary = async (req, res) => {
         }
       }
     ]);
-
-    // 3️⃣ Merge users + time
+    // 3️⃣ Merge employees + time
     const timeMap = {};
     timeData.forEach(t => {
       timeMap[t._id.toString()] = t.totalTime;
     });
-
     const result = employees.map(e => ({
       _id: e._id,
       name: e.name,
       timeWorked: timeMap[e._id.toString()] || 0
     }));
-
     res.json({ success: true, data: result });
   } catch (err) {
-    res.status(500).json({ success: false, message: err.message });
+    console.error("Manager summary error:", err);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch manager summary"
+    });
   }
 };
 const getManagerEmployeeProjectDetails = async (req, res) => {
   try {
-    const managerId = req.user._id;
     const { employeeId } = req.params;
     const { filter, from, to } = req.query;
     const { start, end } = getDateRange(filter, from, to);
-
     // 1️⃣ Security check (employee belongs to manager)
     const employee = await User.findOne({
-      _id: employeeId,
-      reporting_to: managerId
+      _id: employeeId
     });
-
     if (!employee) {
       return res.status(403).json({
         success: false,
         message: "Not authorized"
       });
     }
-
-    // 2️⃣ Project-wise aggregation
     const data = await Timesheet.aggregate([
       {
         $match: {
@@ -517,10 +510,79 @@ const getManagerEmployeeProjectDetails = async (req, res) => {
         }
       }
     ]);
-
     res.json({ success: true, data });
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
+  }
+};
+
+const getEmployeeTimesheet = async (req, res) => {
+  try {
+    const employeeId = req.params.employeeId;
+
+    const timesheets = await Timesheet.aggregate([
+      // 1️⃣ Match logged-in employee
+      {
+        $match: {
+          employee_id: employeeId
+        }
+      },
+
+      // 2️⃣ Join project details
+      {
+        $lookup: {
+          from: "projects", // collection name (plural, lowercase)
+          localField: "project_id",
+          foreignField: "_id",
+          as: "project"
+        }
+      },
+
+      // 3️⃣ Convert project array → object
+      {
+        $unwind: "$project"
+      },
+
+      // 4️⃣ Calculate duration (in hours)
+      {
+        $addFields: {
+          duration: {
+            $round: [
+              {
+                $divide: [
+                  { $subtract: ["$end_time", "$start_time"] },
+                  1000 * 60 * 60
+                ]
+              },
+              2
+            ]
+          }
+        }
+      },
+
+      // 5️⃣ Final response shape
+      {
+        $project: {
+          _id: 0,
+          projectName: "$project.name",
+          description: 1,
+          duration: 1
+        }
+      }
+    ]);
+
+    res.status(200).json({
+      success: true,
+      count: timesheets.length,
+      data: timesheets
+    });
+
+  } catch (error) {
+    console.error("Get Employee Timesheet Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch timesheets"
+    });
   }
 };
 module.exports = {
@@ -530,5 +592,6 @@ module.exports = {
   getAdminDashboardData,
   addTimeSheet,
   getManagerEmployeesTimeSummary,
-  getManagerEmployeeProjectDetails
+  getManagerEmployeeProjectDetails,
+  getEmployeeTimesheet
 };
