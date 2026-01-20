@@ -15,8 +15,10 @@ app.use(
 app.use(express.json());
 const authRoutes = require("./routes/auth");
 const adminRoutes = require("./routes/admin");
+const timesheetRoutes = require("./routes/timesheetroute");
 app.use("/api/auth",authRoutes);
 app.use("/api/admin",adminRoutes);
+app.use("/api/timesheet",timesheetRoutes);
 console.log(process.env.mongoDB_URI);
 mongoose.connect(process.env.mongoDB_URI)
   .then(() => {
