@@ -71,7 +71,7 @@ function LoginModal({ isOpen, onClose }) {
             });
           } else if (is_manager) {
             navigate("/manager/dashboard",{
-              user:result.user
+              state:{user:result.user}
             });
           } else {
             navigate("/employee/dashboard",{

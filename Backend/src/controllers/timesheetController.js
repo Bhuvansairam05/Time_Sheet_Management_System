@@ -409,6 +409,7 @@ const getManagerEmployeesTimeSummary = async (req, res) => {
     const managerId = req.user._id;
     const { filter, from, to } = req.query;
     const { start, end } = getDateRange(filter, from, to);
+    console.log("Manager from token:", req.user._id);
 
     // 1️⃣ Get employees reporting to this manager
     const employees = await User.find(

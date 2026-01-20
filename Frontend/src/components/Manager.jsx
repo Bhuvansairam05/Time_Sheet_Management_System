@@ -6,12 +6,14 @@ import Loader from "./Loader.jsx";
 import toast from "react-hot-toast";
 import ManagerDashboard from "./ManagerDashboard.jsx";
 import ManagerTasks from "./ManagerTasks.jsx";
+import { useLocation } from "react-router-dom";
 
 function Manager() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [activeTab, setActiveTab] = useState("dashboard");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const user = location.state?.user;
   const handleLogout = () => {
     setShowLogoutModal(true);

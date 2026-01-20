@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Loader from "./Loader.jsx";
 import toast from "react-hot-toast";
 
-function ManagerDashboard() {
+function ManagerDashboard({ user }) {
   const [employees, setEmployees] = useState([]);
   const [loading, setLoading] = useState(false);
 
@@ -29,41 +29,32 @@ function ManagerDashboard() {
   };
 
   /* ===============================
-     FETCH TEAM (manager → employees)
-     (API will be added later)
+     FETCH TEAM (REAL API)
   ================================ */
   const fetchTeamWithTime = async () => {
     try {
       setLoading(true);
+      const token = localStorage.getItem("token");
 
-      /**
-       * 🔜 BACKEND WILL COME LATER
-       * Expected response shape:
-       * [
-       *   { _id, name, timeWorked }
-       * ]
-       */
+      let url = `http://localhost:5000/api/timesheet/manager/summary?filter=${filter}`;
+      if (filter === "custom" && fromDate && toDate) {
+        url += `&from=${fromDate}&to=${toDate}`;
+      }
 
-      // TEMP dummy data
-      const dummy = [
-        {
-          _id: "1",
-          name: "T Yashwanth",
-          timeWorked: 23400000,
+      const res = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
         },
-        {
-          _id: "2",
-          name: "P V R Pavan",
-          timeWorked: 15300000,
-        },
-        {
-          _id: "3",
-          name: "Ram",
-          timeWorked: 18000000,
-        },
-      ];
+      });
 
-      setEmployees(dummy);
+      const result = await res.json();
+
+      if (!res.ok) {
+        toast.error(result.message || "Failed to load team");
+        return;
+      }
+
+      setEmployees(result.data);
     } catch {
       toast.error("Failed to load team");
     } finally {
@@ -72,34 +63,41 @@ function ManagerDashboard() {
   };
 
   useEffect(() => {
-    fetchTeamWithTime();
-  }, [filter, fromDate, toDate]);
+    if (user?._id) {
+      fetchTeamWithTime();
+    }
+  }, [filter, toDate, user]);
 
   /* ===============================
      FETCH EMPLOYEE → PROJECT DETAILS
-     (API later)
   ================================ */
   const fetchEmployeeDetails = async (employeeId) => {
     if (detailsData[employeeId]) return;
 
     try {
-      /**
-       * 🔜 BACKEND WILL COME LATER
-       * Expected response:
-       * [
-       *   { projectName, totalTime }
-       * ]
-       */
+      const token = localStorage.getItem("token");
 
-      // TEMP dummy data
-      const dummyProjects = [
-        { projectName: "CRM System", totalTime: 10800000 },
-        { projectName: "Dashboard UI", totalTime: 12600000 },
-      ];
+      let url = `http://localhost:5000/api/timesheet/manager/employee/${employeeId}?filter=${filter}`;
+      if (filter === "custom" && fromDate && toDate) {
+        url += `&from=${fromDate}&to=${toDate}`;
+      }
+
+      const res = await fetch(url, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        toast.error(result.message || "Failed to load project details");
+        return;
+      }
 
       setDetailsData((prev) => ({
         ...prev,
-        [employeeId]: dummyProjects,
+        [employeeId]: result.data,
       }));
     } catch {
       toast.error("Failed to load project details");
@@ -134,7 +132,7 @@ function ManagerDashboard() {
         {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-800">
-            Team Dashboard
+            {user?.name} here is your team dashboard
           </h2>
 
           <button
