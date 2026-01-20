@@ -1,54 +1,136 @@
 import { useEffect, useState } from "react";
+import AddProjectModal from "./AddProjectModal.jsx";
+import toast from "react-hot-toast";
 
 function Projects() {
   const [projects, setProjects] = useState([]);
+  const [managers, setManagers] = useState([]);
   const [loading, setLoading] = useState(false);
 
+  // 🔹 modal state
+  const [showAddProjectModal, setShowAddProjectModal] = useState(false);
+
+  /* ===============================
+     FETCH PROJECTS
+  ================================ */
   const fetchProjects = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(
+        "http://localhost:5000/api/admin/getProjects",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      const result = await res.json();
+
+      if (result.success) {
+        setProjects(result.data);
+      } else {
+        setProjects([]);
+      }
+    } catch (error) {
+      console.error("Error fetching projects:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  /* ===============================
+     FETCH MANAGERS (not_in_project)
+     (temporary frontend filter)
+  ================================ */
+  const fetchManagers = async () => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(
+        "http://localhost:5000/api/auth/getEmployees",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+
+      const result = await res.json();
+
+      if (result.success) {
+        // ⚠️ TEMP: filtering here
+        const availableManagers = result.data.filter(
+          (u) => u.is_manager && u.status === "not_in_project"
+        );
+        setManagers(availableManagers);
+      }
+    } catch (err) {
+      console.error("Error fetching managers", err);
+    }
+  };
+
+  useEffect(() => {
+    fetchProjects();
+    fetchManagers();
+  }, []);
+
+  /* ===============================
+     ADD PROJECT (UI ONLY FOR NOW)
+  ================================ */
+ const handleAddProject = async (projectData) => {
   try {
     setLoading(true);
+    const token = localStorage.getItem("token");
 
-    const token = localStorage.getItem("token"); // or adminToken
-
-    const res = await fetch("http://localhost:5000/api/admin/getProjects", {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    });
+    const res = await fetch(
+      "http://localhost:5000/api/admin/addProject",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(projectData),
+      }
+    );
 
     const result = await res.json();
 
-    if (result.success) {
-      setProjects(result.data);
-    } else {
-      setProjects([]);
+    if (!res.ok) {
+      toast.error(result.message || "Failed to add project");
+      return;
     }
+
+    // ✅ SUCCESS FLOW
+    fetchProjects();
+    toast.success("Project created successfully");
+
+    // ✅ CLOSE MODAL (THIS WAS THE ISSUE)
+    setShowAddProjectModal(false);
+
+    // refresh data
+    fetchProjects();
+    fetchManagers();
+
   } catch (error) {
-    console.error("Error fetching projects:", error);
+    console.error("Add Project Error:", error);
+    toast.error("Server error while adding project");
   } finally {
     setLoading(false);
   }
 };
 
 
-  useEffect(() => {
-    fetchProjects();
-  }, []);
-
-  const handleAddProject = async () => {
-    console.log("Add Project clicked");
-    // after successful add project API call
-    fetchProjects();
-  };
 
   const handleEdit = (projectId) => {
     console.log("Edit project:", projectId);
   };
 
   const handleDelete = async (projectId, projectName) => {
-    console.log("Deleted successfully");
+    console.log("Delete project:", projectId, projectName);
   };
 
   return (
@@ -58,7 +140,7 @@ function Projects() {
         <h2 className="text-2xl font-bold text-gray-800">Projects</h2>
 
         <button
-          onClick={handleAddProject}
+          onClick={() => setShowAddProjectModal(true)}
           className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition font-medium"
         >
           + Add Project
@@ -70,31 +152,18 @@ function Projects() {
         <table className="min-w-full border border-gray-200 rounded-lg">
           <thead className="bg-gray-100">
             <tr>
-              <th className="px-4 py-3 text-sm font-semibold text-gray-600">
-                S.No
-              </th>
-              <th className="px-4 py-3 text-sm font-semibold text-gray-600">
-                Project Name
-              </th>
-              <th className="px-4 py-3 text-sm font-semibold text-gray-600">
-                Managed By
-              </th>
-              <th className="px-4 py-3 text-sm font-semibold text-gray-600">
-                Time Spent
-              </th>
-              <th className="px-4 py-3 text-center text-sm font-semibold text-gray-600">
-                Edit
-              </th>
-              <th className="px-4 py-3 text-center text-sm font-semibold text-gray-600">
-                Delete
-              </th>
+              <th className="px-4 py-3">S.No</th>
+              <th className="px-4 py-3">Project Name</th>
+              <th className="px-4 py-3">Managed By</th>
+              <th className="px-4 py-3 text-center">Edit</th>
+              <th className="px-4 py-3 text-center">Delete</th>
             </tr>
           </thead>
 
           <tbody className="divide-y divide-gray-200">
             {loading && (
               <tr>
-                <td colSpan="6" className="text-center py-6 text-gray-500">
+                <td colSpan="5" className="text-center py-6 text-gray-500">
                   Loading projects...
                 </td>
               </tr>
@@ -102,7 +171,7 @@ function Projects() {
 
             {!loading && projects.length === 0 && (
               <tr>
-                <td colSpan="6" className="text-center py-6 text-gray-500">
+                <td colSpan="5" className="text-center py-6 text-gray-500">
                   No projects found
                 </td>
               </tr>
@@ -110,35 +179,22 @@ function Projects() {
 
             {!loading &&
               projects.map((project, index) => (
-                <tr
-                  key={project.project_id}
-                  className="hover:bg-gray-50 transition"
-                >
-                  <td className="px-4 py-3 text-sm text-gray-800">
-                    {index + 1}
-                  </td>
-
-                  <td className="px-4 py-3 text-sm font-medium text-gray-800">
+                <tr key={project.project_id}>
+                  <td className="px-4 py-3">{index + 1}</td>
+                  <td className="px-4 py-3 font-medium">
                     {project.project_name}
                   </td>
-
-                  <td className="px-4 py-3 text-sm text-gray-700">
+                  <td className="px-4 py-3">
                     {project.manager_name}
                   </td>
-
-                  <td className="px-4 py-3 text-sm text-gray-700">
-                    0 hrs
-                  </td>
-
                   <td className="px-4 py-3 text-center">
                     <button
                       onClick={() => handleEdit(project.project_id)}
-                      className="px-3 py-1.5 text-sm rounded-lg bg-green-600 text-white hover:bg-green-700 transition"
+                      className="bg-green-600 text-white px-3 py-1 rounded"
                     >
                       Edit
                     </button>
                   </td>
-
                   <td className="px-4 py-3 text-center">
                     <button
                       onClick={() =>
@@ -147,7 +203,7 @@ function Projects() {
                           project.project_name
                         )
                       }
-                      className="px-3 py-1.5 text-sm rounded-lg bg-red-600 text-white hover:bg-red-700 transition"
+                      className="bg-red-600 text-white px-3 py-1 rounded"
                     >
                       Delete
                     </button>
@@ -157,6 +213,14 @@ function Projects() {
           </tbody>
         </table>
       </div>
+
+      {/* ✅ ADD PROJECT MODAL */}
+      <AddProjectModal
+        isOpen={showAddProjectModal}
+        onClose={() => setShowAddProjectModal(false)}
+        onSubmit={handleAddProject}
+        managers={managers}
+      />
     </div>
   );
 }

@@ -171,10 +171,6 @@ function Employees() {
             setLoading(false);
         }
     };
-
-    /* ===============================
-       FETCH PROJECT DETAILS
-    ================================ */
     const fetchUserDetails = async (userId) => {
         if (detailsData[userId]) return;
 
@@ -347,24 +343,17 @@ function Employees() {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    {detailsData[u._id]?.map(
-                                                        (p) => (
-                                                            <tr key={p._id}>
-                                                                <td className="px-3 py-2">
-                                                                    {
-                                                                        p
-                                                                            .project[0]
-                                                                            ?.project_name
-                                                                    }
-                                                                </td>
-                                                                <td className="px-3 py-2 text-right">
-                                                                    {formatTime(
-                                                                        p.totalTime
-                                                                    )}
-                                                                </td>
-                                                            </tr>
-                                                        )
-                                                    )}
+                                                    {detailsData[u._id]?.map((p, index) => (
+                                                        <tr key={index}>
+                                                            <td className="text-left">
+                                                                {p.projectName}
+                                                            </td>
+                                                            <td className="px-3 py-2 text-right">
+                                                                {formatTime(p.totalTime)}
+                                                            </td>
+                                                        </tr>
+                                                    ))}
+
                                                 </tbody>
                                             </table>
                                         </td>

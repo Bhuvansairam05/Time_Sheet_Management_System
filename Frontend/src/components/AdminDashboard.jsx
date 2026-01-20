@@ -1,135 +1,201 @@
 import {
-  BarChart, Bar, XAxis, YAxis, CartesianGrid,
-  Tooltip, Legend, ResponsiveContainer,
-  PieChart, Pie, Cell, LineChart, Line
-} from 'recharts';
-import { useState } from 'react';
-import Loader from './Loader.jsx';
+  BarChart,
+  Bar,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip,
+  Legend,
+  ResponsiveContainer,
+  PieChart,
+  Pie,
+  Cell,
+  LineChart,
+  Line,
+} from "recharts";
+import { useEffect, useState } from "react";
+import Loader from "./Loader.jsx";
 import toast from "react-hot-toast";
-function AdminDashboard() {  
-    const [loading, setLoading] = useState(false);
-  const projectTimeData = [
-    { name: 'E-Commerce Website', hours: 245 },
-    { name: 'Mobile App Development', hours: 189 },
-    { name: 'CRM System', hours: 156 },
-    { name: 'Marketing Campaign', hours: 98 },
-    { name: 'Database Migration', hours: 134 }
-  ];
-  const weeklyTrendData = [
-    { day: 'Mon', hours: 45 },
-    { day: 'Tue', hours: 52 },
-    { day: 'Wed', hours: 48 },
-    { day: 'Thu', hours: 61 },
-    { day: 'Fri', hours: 55 },
-    { day: 'Sat', hours: 28 },
-    { day: 'Sun', hours: 15 }
-  ];
 
-  const stats = [
-    { title: 'Total Projects', value: '24', icon: '📊' },
-    { title: 'Active Users', value: '156', icon: '👥' },
-    { title: 'Hours This Week', value: '304', icon: '⏰' },
-    { title: 'Pending Approvals', value: '12', icon: '📋' }
-  ];
+function AdminDashboard() {
+  const [loading, setLoading] = useState(false);
+  const [stats, setStats] = useState([]);
+  const [projectTimeData, setProjectTimeData] = useState([]);
+  const [weeklyTrendData, setWeeklyTrendData] = useState([]);
 
-  const COLORS = ['#FF6B00', '#FF8C3A', '#FFB366', '#FFC999', '#FFDAB3'];
+  const COLORS = ["#FF6B00", "#FF8C3A", "#FFB366", "#FFC999", "#FFDAB3"];
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+
+      const token = localStorage.getItem("token");
+
+      const response = await fetch(
+        "http://localhost:5000/api/timesheet/dashboard",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch dashboard data");
+      }
+
+      const data = await response.json();
+
+      setStats([
+        { title: "Total Projects", value: data.stats.totalProjects, icon: "📊" },
+        { title: "Active Users", value: data.stats.activeUsers, icon: "👥" },
+        { title: "Hours This Week", value: data.stats.hoursThisWeek, icon: "⏰" },
+      ]);
+
+      setProjectTimeData(data.projectTimeData || []);
+      setWeeklyTrendData(data.weeklyTrendData || []);
+    } catch (error) {
+      toast.error(error.message || "Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
 
   return (
     <>
-    {loading && <Loader />}
-    <div className="space-y-6">
-      {/* Header */}
-      <div>
-        <h2 className="text-3xl font-bold text-gray-800">Dashboard</h2>
-        <p className="text-gray-600 mt-1">
-          Welcome back! Here's what's happening with your projects.
-        </p>
-      </div>
+      {loading && <Loader />}
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-        {stats.map((stat, index) => (
-          <div
-            key={index}
-            className="bg-white rounded-lg shadow-md p-6 border-l-4 border-orange-600"
-          >
-            <div className="flex justify-between items-center">
-              <div>
-                <p className="text-sm text-gray-600">{stat.title}</p>
-                <p className="text-3xl font-bold text-gray-800 mt-2">
-                  {stat.value}
-                </p>
-              </div>
-              <div className="bg-orange-100 p-4 rounded-full">
-                <span className="text-3xl">{stat.icon}</span>
+      <div className="space-y-6">
+        {/* Header */}
+        <div>
+          <h2 className="text-3xl font-bold text-gray-800">Dashboard</h2>
+          <p className="text-gray-600 mt-1">
+            Welcome back! Here's what's happening with your projects.
+          </p>
+        </div>
+
+        {/* Stats */}
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {stats.map((stat, index) => (
+            <div
+              key={index}
+              className="bg-white rounded-lg shadow-md p-6 border-l-4 border-orange-600"
+            >
+              <div className="flex justify-between items-center">
+                <div>
+                  <p className="text-sm text-gray-600">{stat.title}</p>
+                  <p className="text-3xl font-bold text-gray-800 mt-2">
+                    {stat.value}
+                  </p>
+                </div>
+                <div className="bg-orange-100 p-4 rounded-full">
+                  <span className="text-3xl">{stat.icon}</span>
+                </div>
               </div>
             </div>
+          ))}
+        </div>
+
+        {/* Charts */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Bar Chart */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-xl font-bold mb-4">
+              Time Spent per Project
+            </h3>
+
+            {projectTimeData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <BarChart data={projectTimeData}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis
+                    dataKey="name"
+                    angle={-20}
+                    textAnchor="end"
+                    height={70}
+                  />
+                  <YAxis />
+                  <Tooltip />
+                  <Legend />
+                  <Bar dataKey="hours" fill="#FF6B00" />
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <p className="text-center text-gray-500">
+                No project data available for this week
+              </p>
+            )}
           </div>
-        ))}
-      </div>
 
-      {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white rounded-lg shadow-md p-6">
-          <h3 className="text-xl font-bold mb-4">
-            Time Spent per Project
-          </h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={projectTimeData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="name" angle={-45} textAnchor="end" height={100} />
-              <YAxis />
-              <Tooltip />
-              <Legend />
-              <Bar dataKey="hours" fill="#FF6B00" />
-            </BarChart>
-          </ResponsiveContainer>
+          {/* Pie Chart */}
+          <div className="bg-white rounded-lg shadow-md p-6">
+            <h3 className="text-xl font-bold mb-4">
+              Project Time Distribution
+            </h3>
+
+            {projectTimeData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={projectTimeData}
+                    dataKey="hours"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    outerRadius={90}
+                    label
+                  >
+                    {projectTimeData.map((_, i) => (
+                      <Cell
+                        key={i}
+                        fill={COLORS[i % COLORS.length]}
+                      />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <p className="text-center text-gray-500">
+                No data to display
+              </p>
+            )}
+          </div>
         </div>
 
+        {/* Line Chart */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <h3 className="text-xl font-bold mb-4">
-            Project Time Distribution
+            Weekly Time Trend
           </h3>
-          <ResponsiveContainer width="100%" height={300}>
-            <PieChart>
-              <Pie
-                data={projectTimeData}
-                cx="50%"
-                cy="50%"
-                outerRadius={80}
-                dataKey="hours"
-                label
-              >
-                {projectTimeData.map((_, i) => (
-                  <Cell key={i} fill={COLORS[i % COLORS.length]} />
-                ))}
-              </Pie>
-              <Tooltip />
-            </PieChart>
-          </ResponsiveContainer>
+
+          {weeklyTrendData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={weeklyTrendData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="day" />
+                <YAxis />
+                <Tooltip />
+                <Legend />
+                <Line
+                  type="monotone"
+                  dataKey="hours"
+                  stroke="#FF6B00"
+                  strokeWidth={2}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          ) : (
+            <p className="text-center text-gray-500">
+              No weekly data available
+            </p>
+          )}
         </div>
       </div>
-
-      {/* Weekly Trend */}
-      <div className="bg-white rounded-lg shadow-md p-6">
-        <h3 className="text-xl font-bold mb-4">Weekly Time Trend</h3>
-        <ResponsiveContainer width="100%" height={300}>
-          <LineChart data={weeklyTrendData}>
-            <CartesianGrid strokeDasharray="3 3" />
-            <XAxis dataKey="day" />
-            <YAxis />
-            <Tooltip />
-            <Legend />
-            <Line
-              type="monotone"
-              dataKey="hours"
-              stroke="#FF6B00"
-              strokeWidth={2}
-            />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-    </div>
     </>
   );
 }

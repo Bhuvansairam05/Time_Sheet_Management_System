@@ -12,7 +12,7 @@ function Manager() {
   const [activeTab, setActiveTab] = useState("dashboard");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
+  const user = location.state?.user;
   const handleLogout = () => {
     setShowLogoutModal(true);
   };
@@ -129,7 +129,7 @@ function Manager() {
 
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {activeTab === "dashboard" && <ManagerDashboard />}
+          {activeTab === "dashboard" && <ManagerDashboard user={user}/>}
           {activeTab === "tasks" && <ManagerTasks />}
         </main>
 

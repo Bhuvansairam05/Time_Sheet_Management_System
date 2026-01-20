@@ -1,73 +1,268 @@
+import { useEffect, useState } from "react";
+import Loader from "./Loader.jsx";
+import toast from "react-hot-toast";
+
 function ManagerDashboard() {
-  // Dummy data (replace with API later)
-  const employees = [
-    { id: 1, name: "T yashwanth", time: "06:30" },
-    { id: 2, name: "P V R pavan", time: "04:15" },
-    { id: 3, name: "Ram", time: "05:00" },
-  ];
+  const [employees, setEmployees] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  // ⏱ filters
+  const [filter, setFilter] = useState("week");
+  const [fromDate, setFromDate] = useState("");
+  const [toDate, setToDate] = useState("");
+
+  // 🔽 expand logic
+  const [expandedRows, setExpandedRows] = useState({});
+  const [expandAll, setExpandAll] = useState(false);
+  const [detailsData, setDetailsData] = useState({});
+
+  /* ===============================
+     UTILITY → ms to HH:MM
+  ================================ */
+  const formatTime = (ms = 0) => {
+    const mins = Math.floor(ms / 60000);
+    const h = Math.floor(mins / 60);
+    const m = mins % 60;
+    return `${h.toString().padStart(2, "0")}:${m
+      .toString()
+      .padStart(2, "0")}`;
+  };
+
+  /* ===============================
+     FETCH TEAM (manager → employees)
+     (API will be added later)
+  ================================ */
+  const fetchTeamWithTime = async () => {
+    try {
+      setLoading(true);
+
+      /**
+       * 🔜 BACKEND WILL COME LATER
+       * Expected response shape:
+       * [
+       *   { _id, name, timeWorked }
+       * ]
+       */
+
+      // TEMP dummy data
+      const dummy = [
+        {
+          _id: "1",
+          name: "T Yashwanth",
+          timeWorked: 23400000,
+        },
+        {
+          _id: "2",
+          name: "P V R Pavan",
+          timeWorked: 15300000,
+        },
+        {
+          _id: "3",
+          name: "Ram",
+          timeWorked: 18000000,
+        },
+      ];
+
+      setEmployees(dummy);
+    } catch {
+      toast.error("Failed to load team");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchTeamWithTime();
+  }, [filter, fromDate, toDate]);
+
+  /* ===============================
+     FETCH EMPLOYEE → PROJECT DETAILS
+     (API later)
+  ================================ */
+  const fetchEmployeeDetails = async (employeeId) => {
+    if (detailsData[employeeId]) return;
+
+    try {
+      /**
+       * 🔜 BACKEND WILL COME LATER
+       * Expected response:
+       * [
+       *   { projectName, totalTime }
+       * ]
+       */
+
+      // TEMP dummy data
+      const dummyProjects = [
+        { projectName: "CRM System", totalTime: 10800000 },
+        { projectName: "Dashboard UI", totalTime: 12600000 },
+      ];
+
+      setDetailsData((prev) => ({
+        ...prev,
+        [employeeId]: dummyProjects,
+      }));
+    } catch {
+      toast.error("Failed to load project details");
+    }
+  };
+
+  const toggleRow = async (employeeId) => {
+    await fetchEmployeeDetails(employeeId);
+    setExpandedRows((prev) => ({
+      ...prev,
+      [employeeId]: !prev[employeeId],
+    }));
+  };
+
+  const handleExpandAll = async () => {
+    const newState = !expandAll;
+    setExpandAll(newState);
+
+    const map = {};
+    for (const emp of employees) {
+      map[emp._id] = newState;
+      await fetchEmployeeDetails(emp._id);
+    }
+    setExpandedRows(map);
+  };
 
   return (
-    <div className="bg-white rounded-lg shadow-md p-6">
-      <h2 className="text-2xl font-bold text-gray-800 mb-6">
-        Dashboard
-      </h2>
+    <>
+      {loading && <Loader />}
 
-      <div className="overflow-x-auto">
-        <table className="min-w-full border border-gray-200 rounded-lg overflow-hidden">
+      <div className="bg-white rounded-lg shadow-md p-6">
+        {/* Header */}
+        <div className="flex justify-between items-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-800">
+            Team Dashboard
+          </h2>
+
+          <button
+            onClick={handleExpandAll}
+            className="bg-blue-600 text-white px-4 py-2 rounded"
+          >
+            Details
+          </button>
+        </div>
+
+        <table className="min-w-full border rounded-lg">
           <thead className="bg-gray-100">
             <tr>
-              <th className="px-4 py-3 text-sm font-semibold text-gray-600">
-                S.No
-              </th>
-              <th className="px-4 py-3 text-sm font-semibold text-gray-600">
-                Employee Name
-              </th>
-              <th className="px-4 py-3 text-center text-sm font-semibold text-gray-600">
-                Time Spent
-              </th>
-              <th className="px-4 py-3 text-center text-sm font-semibold text-gray-600">
-                Details
+              <th className="px-4 py-3">S.No</th>
+              <th className="px-4 py-3">Employee Name</th>
+
+              {/* ⏱ FILTER */}
+              <th className="px-4 py-3 text-center">
+                <div className="flex flex-col items-center gap-1">
+                  <span>Time Worked</span>
+
+                  <select
+                    value={filter}
+                    onChange={(e) => setFilter(e.target.value)}
+                    className="border rounded px-2 py-1 text-sm"
+                  >
+                    <option value="day">Today</option>
+                    <option value="week">Week</option>
+                    <option value="month">Month</option>
+                    <option value="custom">Custom</option>
+                  </select>
+
+                  {filter === "custom" && (
+                    <div className="flex gap-1">
+                      <input
+                        type="date"
+                        value={fromDate}
+                        onChange={(e) => setFromDate(e.target.value)}
+                        className="border rounded px-1 text-xs"
+                      />
+                      <input
+                        type="date"
+                        value={toDate}
+                        onChange={(e) => setToDate(e.target.value)}
+                        className="border rounded px-1 text-xs"
+                      />
+                    </div>
+                  )}
+                </div>
               </th>
             </tr>
           </thead>
 
-          <tbody className="divide-y divide-gray-200">
-            {employees.map((emp, index) => (
-              <tr key={emp.id} className="hover:bg-gray-50 transition">
-                <td className="px-4 py-3 text-sm">
-                  {index + 1}
-                </td>
+          <tbody>
+            {employees.map((emp, i) => (
+              <>
+                <tr
+                  key={emp._id}
+                  className="border-t hover:bg-gray-50 cursor-pointer"
+                  onClick={() => toggleRow(emp._id)}
+                >
+                  <td className="px-4 py-3">{i + 1}</td>
+                  <td className="px-4 py-3 font-medium">
+                    {emp.name}
+                  </td>
+                  <td className="px-4 py-3 text-center">
+                    {formatTime(emp.timeWorked)}
+                  </td>
+                </tr>
 
-                <td className="px-4 py-3 text-sm font-medium text-gray-800">
-                  {emp.name}
-                </td>
+                {expandedRows[emp._id] && (
+                  <tr className="bg-gray-50">
+                    <td colSpan="3" className="px-8 py-4">
+                      <table className="w-full border">
+                        <thead className="bg-gray-200">
+                          <tr>
+                            <th className="px-3 py-2 text-left">
+                              Project
+                            </th>
+                            <th className="px-3 py-2 text-right">
+                              Time
+                            </th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {detailsData[emp._id]?.map((p, idx) => (
+                            <tr key={idx}>
+                              <td className="px-3 py-2 text-left">
+                                {p.projectName}
+                              </td>
+                              <td className="px-3 py-2 text-right">
+                                {formatTime(p.totalTime)}
+                              </td>
+                            </tr>
+                          ))}
 
-                <td className="px-4 py-3 text-center text-sm">
-                  {emp.time}
-                </td>
-
-                <td className="px-4 py-3 text-center">
-                  <button className="bg-orange-500 text-white px-4 py-1.5 rounded-md hover:bg-orange-600 transition text-sm font-medium">
-                    Details
-                  </button>
-                </td>
-              </tr>
+                          {detailsData[emp._id]?.length === 0 && (
+                            <tr>
+                              <td
+                                colSpan="2"
+                                className="text-center py-2 text-gray-500"
+                              >
+                                No project data
+                              </td>
+                            </tr>
+                          )}
+                        </tbody>
+                      </table>
+                    </td>
+                  </tr>
+                )}
+              </>
             ))}
 
             {employees.length === 0 && (
               <tr>
                 <td
-                  colSpan="4"
+                  colSpan="3"
                   className="text-center py-6 text-gray-500"
                 >
-                  No data available
+                  No employees reporting to you
                 </td>
               </tr>
             )}
           </tbody>
         </table>
       </div>
-    </div>
+    </>
   );
 }
 

@@ -125,7 +125,8 @@ const addProject = async (req, res) => {
         message: "Selected user is not a manager",
       });
     }
-
+    manager.status = "in_project";
+    await manager.save();
     const project = await Project.create({
       project_name,
       manager_id,

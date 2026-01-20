@@ -70,9 +70,13 @@ function LoginModal({ isOpen, onClose }) {
               }
             });
           } else if (is_manager) {
-            navigate("/manager/dashboard");
+            navigate("/manager/dashboard",{
+              user:result.user
+            });
           } else {
-            navigate("/employee/dashboard");
+            navigate("/employee/dashboard",{
+              user:result.user
+            });
           }
         }
         else {
