@@ -82,6 +82,23 @@ function Employees() {
     useEffect(() => {
         fetchEmployeesWithTime();
     }, [filter, fromDate, toDate, showAddUserModal]);
+    useEffect(() => {
+    setDetailsData({});
+    setExpandedRows({});
+    setExpandAll(false);
+    const refetchExpandedUsers = async () => {
+        for (const userId of Object.keys(expandedRows)) {
+            if (expandedRows[userId]) {
+                await fetchUserDetails(userId);
+            }
+        }
+    };
+
+    if (Object.keys(expandedRows).length > 0) {
+        refetchExpandedUsers();
+    }
+}, [filter, fromDate, toDate]);
+
 
     /* ===============================
        ADD / UPDATE / DELETE
@@ -172,7 +189,6 @@ function Employees() {
         }
     };
     const fetchUserDetails = async (userId) => {
-        if (detailsData[userId]) return;
 
         try {
             const token = localStorage.getItem("token");

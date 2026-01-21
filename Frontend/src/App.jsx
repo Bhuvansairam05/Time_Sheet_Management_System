@@ -1,7 +1,6 @@
 import './App.css'
 import {Routes, BrowserRouter, Route} from "react-router-dom"
 import Home from './components/Home.jsx'
-import Login from './components/Login.jsx'
 import LoginModal from './components/LoginModal.jsx'
 import Admin from './components/Admin.jsx'
 import Employee from './components/Employee.jsx'
@@ -14,7 +13,6 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path='/' index element={<Home/>}/>
-          <Route path='/login' element={<Login/>}/>
           <Route path='/loginModal' element={<LoginModal/>}/>
           <Route path='/admin/dashboard' element={<Admin/>}/>
           <Route path='/manager/dashboard' element={<Manager/>}/>

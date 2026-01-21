@@ -52,11 +52,28 @@ function ManagerDashboard({ user }) {
       fetchTeamWithTime();
     }
   }, [filter, toDate, user]);
+  useEffect(() => {
+  setDetailsData({});
+  setExpandedRows({});
+  setExpandAll(false);
+  const refetchExpandedDetails = async () => {
+    for (const empId of Object.keys(expandedRows)) {
+      if (expandedRows[empId]) {
+        await fetchEmployeeDetails(empId);
+      }
+    }
+  };
+
+  if (Object.keys(expandedRows).length > 0) {
+    refetchExpandedDetails();
+  }
+}, [filter, fromDate, toDate]);
+
   /* ===============================
      FETCH EMPLOYEE → PROJECT DETAILS
   ================================ */
   const fetchEmployeeDetails = async (employeeId) => {
-    if (detailsData[employeeId]) return;
+    if (detailsData[employeeId]?.filter === filter) return;
     try {
       const token = localStorage.getItem("token");
       let url = `http://localhost:5000/api/timesheet/manager/employee/${employeeId}?filter=${filter}`;

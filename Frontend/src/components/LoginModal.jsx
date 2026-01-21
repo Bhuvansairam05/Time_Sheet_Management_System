@@ -75,7 +75,7 @@ function LoginModal({ isOpen, onClose }) {
             });
           } else {
             navigate("/employee/dashboard",{
-              user:result.user
+              state:{user:result.user}
             });
           }
         }

@@ -197,7 +197,7 @@ const getAllUsersDetailedView = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
-const getAdminDashboardData = async(req,res)=>{
+const getAdminDashboardData = async (req, res) => {
   try {
     /** ---------------- STATS ---------------- */
 
@@ -338,7 +338,7 @@ const getAdminDashboardData = async(req,res)=>{
     });
   }
 }
-const addTimeSheet = async(req,res)=>{
+const addTimeSheet = async (req, res) => {
   try {
     const {
       project_id,
@@ -515,35 +515,32 @@ const getManagerEmployeeProjectDetails = async (req, res) => {
     res.status(500).json({ success: false, message: err.message });
   }
 };
-
 const getEmployeeTimesheet = async (req, res) => {
   try {
-    const employeeId = req.params.employeeId;
+    const employeeId = new mongoose.Types.ObjectId(req.params.employeeId);
 
     const timesheets = await Timesheet.aggregate([
-      // 1️⃣ Match logged-in employee
+      // 1️⃣ Match employee (ObjectId match)
       {
         $match: {
           employee_id: employeeId
         }
       },
 
-      // 2️⃣ Join project details
+      // 2️⃣ Join project
       {
         $lookup: {
-          from: "projects", // collection name (plural, lowercase)
+          from: "projects",
           localField: "project_id",
           foreignField: "_id",
           as: "project"
         }
       },
 
-      // 3️⃣ Convert project array → object
-      {
-        $unwind: "$project"
-      },
+      // 3️⃣ Convert array → object
+      { $unwind: "$project" },
 
-      // 4️⃣ Calculate duration (in hours)
+      // 4️⃣ Calculate duration
       {
         $addFields: {
           duration: {
@@ -560,14 +557,20 @@ const getEmployeeTimesheet = async (req, res) => {
         }
       },
 
-      // 5️⃣ Final response shape
+      // 5️⃣ Final output
       {
         $project: {
-          _id: 0,
-          projectName: "$project.name",
+          _id: 1,
+          projectName: "$project.project_name", // ✅ FIXED
           description: 1,
-          duration: 1
+          duration: 1,
+          start_time: 1
         }
+      },
+
+      // 6️⃣ Sort
+      {
+        $sort: { start_time: -1 }
       }
     ]);
 
@@ -585,6 +588,30 @@ const getEmployeeTimesheet = async (req, res) => {
     });
   }
 };
+const getProjectsList = async (req, res) => {
+  try {
+    const projects = await Project.find(
+      {}, // no filter
+      {
+        _id: 1,
+        project_name: 1,
+        manager_id: 1
+      }
+    ).lean();
+
+    res.status(200).json({
+      success: true,
+      count: projects.length,
+      data: projects
+    });
+  } catch (error) {
+    console.error("Get Projects List Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch projects"
+    });
+  }
+};
 module.exports = {
   getUsersTimeSummary,
   getEmployeeProjectDetails,
@@ -593,5 +620,6 @@ module.exports = {
   addTimeSheet,
   getManagerEmployeesTimeSummary,
   getManagerEmployeeProjectDetails,
-  getEmployeeTimesheet
+  getEmployeeTimesheet,
+  getProjectsList
 };

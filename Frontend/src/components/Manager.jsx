@@ -132,7 +132,7 @@ function Manager() {
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {activeTab === "dashboard" && <ManagerDashboard user={user}/>}
-          {activeTab === "tasks" && <ManagerTasks employeeId={user?.id}/>}
+          {activeTab === "tasks" && <ManagerTasks user={user}/>}
         </main>
 
         {/* Logout Modal */}

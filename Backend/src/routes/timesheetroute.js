@@ -9,15 +9,17 @@ const {
     addTimeSheet,
     getManagerEmployeesTimeSummary,
     getManagerEmployeeProjectDetails,
-    getEmployeeTimesheet
+    getEmployeeTimesheet,
+    getProjectsList
 } = require("../controllers/timesheetController");
 const router = express.Router();
 router.get("/dashboard", authMiddleware, getAdminDashboardData);
 router.get("/summary", authMiddleware, getUsersTimeSummary);
 router.get("/employee/:employeeId", authMiddleware, getEmployeeProjectDetails);
 router.get("/details", authMiddleware, getAllUsersDetailedView);
-router.post("/addTimesheet", authMiddleware, addTimeSheet);
+router.post("/addTimesheet", addTimeSheet);
 router.get("/manager/summary", authMiddleware,  getManagerEmployeesTimeSummary);
 router.get("/manager/employee/:employeeId",  getManagerEmployeeProjectDetails);
-router.get("/employeeTimesheet/:employeeId",getEmployeeTimesheet)
+router.get("/employeeTimesheet/:employeeId",getEmployeeTimesheet);
+router.get("/projectsList",getProjectsList);
 module.exports = router;
