@@ -1,6 +1,7 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/User");
+const Project = require("../models/Project");
 const { OAuth2Client } = require("google-auth-library");
 
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -44,6 +45,9 @@ catch(Exception){
   return res.status(500).json("500 Server not found");
 }
 };
+
+const getHomeData = async(req,res)=>{
+}
 
 const loginUser = async (req, res) => {
   try{ 
@@ -151,4 +155,4 @@ catch(Exception){
   return res.status(500).json({message:"500 server not found"});
 }
 }
-module.exports = { loginUser, getUser, logoutUser,googleLogin,getEmployees};
+module.exports = { loginUser, getUser, logoutUser,googleLogin,getEmployees,getHomeData};
