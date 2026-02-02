@@ -10,7 +10,8 @@ const {
     getManagerEmployeesTimeSummary,
     getManagerEmployeeProjectDetails,
     getEmployeeTimesheet,
-    getProjectsList
+    getProjectsList,
+    getFilteredTimesheet
 } = require("../controllers/timesheetController");
 const router = express.Router();
 router.get("/dashboard", authMiddleware, getAdminDashboardData);
@@ -22,4 +23,5 @@ router.get("/manager/summary", authMiddleware,  getManagerEmployeesTimeSummary);
 router.get("/manager/employee/:employeeId",  getManagerEmployeeProjectDetails);
 router.get("/employeeTimesheet/:employeeId",getEmployeeTimesheet);
 router.get("/projectsList",getProjectsList);
+router.get("/filteredTimesheet", getFilteredTimesheet);
 module.exports = router;

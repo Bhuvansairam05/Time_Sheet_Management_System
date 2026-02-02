@@ -612,6 +612,115 @@ const getProjectsList = async (req, res) => {
     });
   }
 };
+const getFilteredTimesheet = async (req, res) => {
+  try {
+    const { type, employeeId, from, to } = req.query;
+
+    const empId = new mongoose.Types.ObjectId(employeeId);
+
+    let fromDate, toDate;
+    const today = new Date();
+
+    const startOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    const endOfToday = new Date(today.getFullYear(), today.getMonth(), today.getDate(), 23, 59, 59, 999);
+
+    if (type === "today") {
+      fromDate = startOfToday;
+      toDate = endOfToday;
+    }
+
+    else if (type === "week") {
+      const day = today.getDay();
+      const diffToMonday = today.getDate() - day + (day === 0 ? -6 : 1);
+
+      fromDate = new Date(today.getFullYear(), today.getMonth(), diffToMonday);
+      toDate = endOfToday;
+    }
+
+    else if (type === "month") {
+      fromDate = new Date(today.getFullYear(), today.getMonth(), 1);
+      toDate = endOfToday;
+    }
+
+    else if (type === "custom") {
+      fromDate = new Date(from);
+      toDate = new Date(to);
+      toDate.setHours(23, 59, 59, 999);
+    }
+
+    // ✅ SAME AGGREGATION + DATE FILTER
+    const timesheets = await Timesheet.aggregate([
+      {
+        $match: {
+          employee_id: empId,
+          createdAt: { $gte: fromDate, $lte: toDate } // 🔥 important
+        }
+      },
+
+      {
+        $lookup: {
+          from: "projects",
+          localField: "project_id",
+          foreignField: "_id",
+          as: "project"
+        }
+      },
+
+      { $unwind: "$project" },
+
+      {
+        $addFields: {
+          duration: {
+            $round: [
+              {
+                $divide: [
+                  { $subtract: ["$end_time", "$start_time"] },
+                  1000 * 60 * 60
+                ]
+              },
+              2
+            ]
+          }
+        }
+      },
+
+      {
+        $project: {
+          _id: 1,
+          projectName: "$project.project_name",
+          description: 1,
+          duration: 1,
+          start_time: 1
+        }
+      },
+
+      { $sort: { start_time: -1 } }
+    ]);
+
+    // ✅ Summary
+    const totalHours = timesheets.reduce((sum, t) => sum + t.duration, 0);
+
+    res.status(200).json({
+      success: true,
+      data: {
+        tasks: timesheets,
+        summary: {
+          totalHours: totalHours.toFixed(2),
+          totalTasks: timesheets.length
+        }
+      }
+    });
+
+  } catch (error) {
+    console.error("Filtered Timesheet Error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to fetch filtered timesheets"
+    });
+  }
+};
+
+
 module.exports = {
   getUsersTimeSummary,
   getEmployeeProjectDetails,
@@ -621,5 +730,6 @@ module.exports = {
   getManagerEmployeesTimeSummary,
   getManagerEmployeeProjectDetails,
   getEmployeeTimesheet,
-  getProjectsList
+  getProjectsList,
+  getFilteredTimesheet
 };
