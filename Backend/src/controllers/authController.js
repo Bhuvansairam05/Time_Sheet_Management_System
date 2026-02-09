@@ -7,51 +7,63 @@ const { OAuth2Client } = require("google-auth-library");
 const client = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
 const googleLogin = async (req, res) => {
-  try{ 
-  const { token } = req.body;
-
-  const ticket = await client.verifyIdToken({
-    idToken: token,
-    audience: process.env.GOOGLE_CLIENT_ID,
-  });
-
-  const payload = ticket.getPayload();
-
-  const { email, name } = payload;
-
-  let user = await User.findOne({ email });
-
-  if (!user) {
-    user = await User.create({
-      name,
-      email,
-      role: "employee",
-      is_manager: false,
+  try {
+    const { token, rememberMe } = req.body;
+    const ticket = await client.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
     });
+
+    const payload = ticket.getPayload();
+    const { email } = payload;
+
+    // ✅ check user exists
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "No existing user"
+      });
+    }
+    const expiry = rememberMe ? "7d" : "1d";
+
+
+    // ✅ create jwt
+    const jwtToken = jwt.sign(
+      { userId: user._id, role: user.role },
+      process.env.JWT_SECRET,
+      { expiresIn: expiry }
+    );
+
+    // ✅ SAME FORMAT AS NORMAL LOGIN
+    return res.status(200).json({
+      success: true,
+      message: "Login successful",
+      token: jwtToken,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+        role: user.role,
+        is_manager: user.is_manager
+      }
+    });
+
+  } catch (error) {
+    console.error("Google Login Error:", error);
+    return res.status(500).json({ message: "Server error" });
   }
-
-  const jwtToken = jwt.sign(
-    { userId: user._id, role: user.role },
-    process.env.JWT_SECRET,
-    { expiresIn: "1d" }
-  );
-
-  return res.status(200).json({
-    token: jwtToken,
-    user,
-  });
-}
-catch(Exception){
-  return res.status(500).json("500 Server not found");
-}
 };
+
 
 const getHomeData = async(req,res)=>{
 }
 
 const loginUser = async (req, res) => {
   try{ 
-  const { email, password } = req.body;
+  const { email, password, rememberMe } = req.body;
+
 
   if (!email || !password) {
     return res.status(400).json({
@@ -59,7 +71,7 @@ const loginUser = async (req, res) => {
       message: "Email and password are required"
     });
   }
-
+  const expiry = rememberMe ? "7d" : "1d";
   const user = await User.findOne({ email });
   if (!user) {
     return res.status(404).json({
@@ -78,7 +90,7 @@ const loginUser = async (req, res) => {
   const token = jwt.sign(
     { userId: user._id, role: user.role },
     process.env.JWT_SECRET,
-    { expiresIn: "1d" }
+    { expiresIn: expiry }
   );
   if(user.role=="admin"){
     const users = await User.find({role:"employee"});
