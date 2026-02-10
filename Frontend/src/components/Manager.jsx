@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 import Loader from "./Loader.jsx";
 import toast from "react-hot-toast";
 import ManagerDashboard from "./ManagerDashboard.jsx";
-import ManagerTasks from "./ManagerTasks.jsx";
+import MyTasks from "./MyTasks.jsx";
 import { useLocation } from "react-router-dom";
 
 function Manager() {
@@ -132,7 +132,7 @@ function Manager() {
         {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {activeTab === "dashboard" && <ManagerDashboard user={user}/>}
-          {activeTab === "tasks" && <ManagerTasks user={user}/>}
+          {activeTab === "tasks" && <MyTasks user={user}/>}
         </main>
 
         {/* Logout Modal */}

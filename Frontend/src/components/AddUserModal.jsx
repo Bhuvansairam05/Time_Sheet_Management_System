@@ -37,10 +37,14 @@ function AddUserModal({ isOpen, onClose, onSubmit, managers }) {
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const payload = {
-      ...formData,
-      reporting_to: formData.is_manager ? null : formData.reporting_to,
-    };
+    const isManager = formData.role === "manager";
+
+const payload = {
+  ...formData,
+  is_manager: isManager,
+  reporting_to: formData.reporting_to || null
+};
+
 
     onSubmit(payload);
 
@@ -103,26 +107,17 @@ function AddUserModal({ isOpen, onClose, onSubmit, managers }) {
             onChange={handleChange}
             className="w-full px-4 py-2 border rounded-lg"
           >
-            <option value="employee">Employee</option>
             <option value="admin">Admin</option>
+            <option value="manager">Manager</option>
+            <option value="employee">Employee</option>
           </select>
 
-          <label className="flex items-center gap-2 text-sm text-gray-700">
-            <input
-              type="checkbox"
-              name="is_manager"
-              checked={formData.is_manager}
-              onChange={handleChange}
-            />
-            Is Manager
-          </label>
-
-          {!formData.is_manager && (
+          
             <select
               name="reporting_to"
               value={formData.reporting_to}
               onChange={handleChange}
-              required
+              required={formData.role === "employee"}
               className="w-full px-4 py-2 border rounded-lg"
             >
               <option value="">Select Manager</option>
@@ -139,7 +134,6 @@ function AddUserModal({ isOpen, onClose, onSubmit, managers }) {
                 ))
               )}
             </select>
-          )}
 
           <div className="flex justify-end gap-3 pt-4">
             <button

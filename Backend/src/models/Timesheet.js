@@ -22,6 +22,9 @@ const TimesheetSchema = new mongoose.Schema({
     },
     description:{
         type:String
+    },
+    date:{
+        type:Date
     }
 }, { timestamps: true });
 module.exports = mongoose.model("Timesheet",TimesheetSchema);

@@ -1,311 +1,3 @@
-// import { useEffect, useState } from "react";
-// import toast from "react-hot-toast";
-// import axios from "axios";
-// import { useLocation, useNavigate } from "react-router-dom";
-// import LogoutConfirmModal from "./LogoutConfirmModal.jsx";
-// import Loader from "./Loader.jsx";
-// import logo from "../assets/Logo_remove.png";
-
-// function Employee() {
-//   const [tasks, setTasks] = useState([]);
-//   const [projects, setProjects] = useState([]);
-//   const [showLogoutModal, setShowLogoutModal] = useState(false);
-//   const [loading, setLoading] = useState(false);
-
-//   const [formData, setFormData] = useState({
-//     project: "",
-//     description: "",
-//     startTime: "",
-//     endTime: "",
-//   });
-
-//   const location = useLocation();
-//   const navigate = useNavigate();
-
-//   const user = location.state?.user;
-//   const employeeId = user?.id || user?._id;
-
-//   /* ================= LOGOUT ================= */
-
-//   const handleLogout = () => {
-//     setShowLogoutModal(true);
-//   };
-
-//   const confirmLogout = () => {
-//     localStorage.removeItem("token");
-//     localStorage.removeItem("role");
-//     toast.success("Logged out successfully");
-//     setShowLogoutModal(false);
-//     navigate("/");
-//   };
-
-//   /* ================= FETCH TIMESHEETS ================= */
-
-//   const fetchTasks = async () => {
-//     try {
-//       const res = await axios.get(
-//         `http://localhost:5000/api/timesheet/employeeTimesheet/${employeeId}`
-//       );
-
-//       if (res.data.success) {
-//         setTasks(res.data.data);
-//       }
-//     } catch (error) {
-//       console.error(error);
-//       toast.error("Failed to load tasks");
-//     }
-//   };
-
-//   useEffect(() => {
-//     if (employeeId) {
-//       fetchTasks();
-//     }
-//   }, [employeeId]);
-
-//   /* ================= FETCH PROJECTS ================= */
-
-//   useEffect(() => {
-//     const fetchProjects = async () => {
-//       try {
-//         const res = await axios.get(
-//           "http://localhost:5000/api/timesheet/projectsList"
-//         );
-
-//         if (res.data.success) {
-//           setProjects(res.data.data);
-//         }
-//       } catch (error) {
-//         toast.error("Failed to load projects");
-//       }
-//     };
-
-//     fetchProjects();
-//   }, []);
-
-//   /* ================= HANDLERS ================= */
-
-//   const handleChange = (e) => {
-//     setFormData({
-//       ...formData,
-//       [e.target.name]: e.target.value,
-//     });
-//   };
-
-//   const handleSubmit = async (e) => {
-//     e.preventDefault();
-
-//     const { project, description, startTime, endTime } = formData;
-
-//     if (!project || !description || !startTime || !endTime) {
-//       toast.error("All fields are required");
-//       return;
-//     }
-
-//     const selectedProject = projects.find((p) => p._id === project);
-//     if (!selectedProject) {
-//       toast.error("Invalid project selected");
-//       return;
-//     }
-
-//     const managerId = selectedProject.manager_id;
-
-//     const today = new Date().toISOString().split("T")[0];
-//     const start_time = `${today}T${startTime}:00`;
-//     const end_time = `${today}T${endTime}:00`;
-
-//     if (new Date(end_time) <= new Date(start_time)) {
-//       toast.error("End time must be greater than start time");
-//       return;
-//     }
-
-//     try {
-//       setLoading(true);
-
-//       const body = {
-//         project_id: project,
-//         manager_id: managerId,
-//         employee_id: employeeId,
-//         start_time,
-//         end_time,
-//         description,
-//       };
-
-//       const res = await axios.post(
-//         "http://localhost:5000/api/timesheet/addTimesheet",
-//         body
-//       );
-
-//       if (res.data.success) {
-//         toast.success("Timesheet added successfully");
-//         fetchTasks();
-
-//         setFormData({
-//           project: "",
-//           description: "",
-//           startTime: "",
-//           endTime: "",
-//         });
-//       }
-//     } catch (error) {
-//       console.error(error);
-//       toast.error("Failed to add timesheet");
-//     } finally {
-//       setLoading(false);
-//     }
-//   };
-
-//   return (
-//     <>
-//       {loading && <Loader />}
-
-//       <div className="min-h-screen bg-gray-50">
-//         {/* NAVBAR */}
-//         <nav className="bg-white shadow-md">
-//           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-//             <div className="flex justify-between items-center h-16">
-//               <div className="flex items-center gap-2">
-//                 <img
-//                   src={logo}
-//                   alt="TimeTrack Pro Logo"
-//                   className="h-7 w-auto object-contain"
-//                 />
-//                 <h1 className="text-2xl font-bold text-orange-600">
-//                   TimeTrack Pro
-//                 </h1>
-//                 <span className="ml-2 px-3 py-1 bg-green-100 text-green-600 text-xs font-semibold rounded-full">
-//                   Employee
-//                 </span>
-//               </div>
-
-//               <button
-//                 onClick={handleLogout}
-//                 className="flex items-center gap-2 bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition font-medium"
-//               >
-//                 Logout
-//               </button>
-//             </div>
-//           </div>
-//         </nav>
-
-//         {/* CONTENT */}
-//         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-//           <h2 className="text-xl font-semibold text-gray-800 mb-6">
-//             {user?.name}, here is your work
-//           </h2>
-
-//           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-//             {/* LEFT – TABLE */}
-//             <div className="bg-white rounded-md shadow p-4">
-//               <h3 className="text-lg font-semibold text-gray-800 mb-2">
-//                 Task List
-//               </h3>
-
-//               {tasks.length === 0 ? (
-//                 <p className="text-xs text-gray-500">No tasks added</p>
-//               ) : (
-//                 <table className="w-full border text-xs">
-//                   <thead className="bg-gray-100">
-//                     <tr>
-//                       <th className="border px-2 py-1">S.No</th>
-//                       <th className="border px-2 py-1">Project</th>
-//                       <th className="border px-2 py-1">Task</th>
-//                       <th className="border px-2 py-1">Hrs</th>
-//                     </tr>
-//                   </thead>
-//                   <tbody>
-//                     {tasks.map((task, i) => (
-//                       <tr key={task._id || i}>
-//                         <td className="border px-2 py-1 text-center">
-//                           {i + 1}
-//                         </td>
-//                         <td className="border px-2 py-1">
-//                           {task.projectName}
-//                         </td>
-//                         <td className="border px-2 py-1">
-//                           {task.description}
-//                         </td>
-//                         <td className="border px-2 py-1 text-center">
-//                           {task.duration}
-//                         </td>
-//                       </tr>
-//                     ))}
-//                   </tbody>
-//                 </table>
-//               )}
-//             </div>
-
-//             {/* RIGHT – FORM */}
-//             <div className="bg-white rounded-md shadow p-4">
-//               <h3 className="text-lg font-semibold text-gray-800 mb-3">
-//                 Add Task
-//               </h3>
-
-//               <form onSubmit={handleSubmit} className="space-y-3">
-//                 <select
-//                   name="project"
-//                   value={formData.project}
-//                   onChange={handleChange}
-//                   className="w-full border rounded px-3 py-1.5 text-sm focus:ring-2 focus:ring-orange-400"
-//                 >
-//                   <option value="">Select Project</option>
-//                   {projects.map((p) => (
-//                     <option key={p._id} value={p._id}>
-//                       {p.project_name}
-//                     </option>
-//                   ))}
-//                 </select>
-
-//                 <textarea
-//                   name="description"
-//                   value={formData.description}
-//                   onChange={handleChange}
-//                   rows="2"
-//                   className="w-full border rounded px-3 py-1.5 text-sm"
-//                   placeholder="Task description"
-//                 />
-
-//                 <input
-//                   type="time"
-//                   name="startTime"
-//                   value={formData.startTime}
-//                   onChange={handleChange}
-//                   className="w-full border rounded px-3 py-1.5 text-sm"
-//                 />
-
-//                 <input
-//                   type="time"
-//                   name="endTime"
-//                   value={formData.endTime}
-//                   onChange={handleChange}
-//                   className="w-full border rounded px-3 py-1.5 text-sm"
-//                 />
-
-//                 <button
-//                   type="submit"
-//                   className="w-full bg-orange-600 text-white py-1.5 rounded text-sm hover:bg-orange-700"
-//                 >
-//                   Add Task
-//                 </button>
-//               </form>
-//             </div>
-//           </div>
-//         </main>
-
-//         {/* LOGOUT MODAL */}
-//         <LogoutConfirmModal
-//           isOpen={showLogoutModal}
-//           onClose={() => setShowLogoutModal(false)}
-//           onConfirm={confirmLogout}
-//         />
-//       </div>
-//     </>
-//   );
-// }
-
-// export default Employee;
-
-
-
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import axios from "axios";
@@ -315,7 +7,8 @@ import Loader from "./Loader.jsx";
 import logo from "../assets/Logo_remove.png";
 import { Clock, Calendar, TrendingUp, Plus, Filter } from "lucide-react";
 
-function Employee() {
+function EmployeeDashboard() {
+  const [showModal, setShowModal] = useState(false);
   const [tasks, setTasks] = useState([]);
   const [projects, setProjects] = useState([]);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
@@ -324,6 +17,82 @@ function Employee() {
   const [showFilterDropdown, setShowFilterDropdown] = useState(false);
   const [summary, setSummary] = useState({ totalHours: 0, totalTasks: 0 });
   const [customDates, setCustomDates] = useState({ from: "", to: "" });
+  const emptyTask = {
+    project: "",
+    description: "",
+    timeWorked: "",
+    date: new Date().toISOString().split("T")[0]
+  };
+
+  const [taskRows, setTaskRows] = useState([emptyTask]);
+  const addRow = () => {
+    setTaskRows([...taskRows, emptyTask]);
+  };
+  const handleRowChange = (index, field, value) => {
+    const updated = [...taskRows];
+    updated[index][field] = value;
+    setTaskRows(updated);
+  };
+  const closeModal = () => {
+    setShowModal(false);
+    setTaskRows([emptyTask]);
+  };
+
+  const handleSubmitAll = async () => {
+    try {
+      setLoading(true);
+
+      const payload = [];
+
+      for (const row of taskRows) {
+        if (!row.project || !row.timeWorked) {
+          toast.error("Fill all required fields");
+          return;
+        }
+
+        const selectedProject = projects.find(p => p._id === row.project);
+
+        const start = new Date(row.date);
+        const hours = parseFloat(row.timeWorked);
+        const end = new Date(start.getTime() + hours * 60 * 60 * 1000);
+
+        payload.push({
+          project_id: row.project,
+          manager_id: selectedProject.manager_id,
+          employee_id: employeeId,
+          start_time: start.toISOString(),
+          end_time: end.toISOString(),
+          description: row.description,
+          date: row.date
+        });
+      }
+
+      const res = await axios.post(
+        "http://localhost:5000/api/timesheet/addTimesheet",
+        { tasks: payload }
+      );
+
+      if (res.data.success) {
+        toast.success("Timesheets added");
+        closeModal();
+        fetchFilteredTasks(timeFilter);
+      }
+
+    } catch (err) {
+      toast.error("Failed");
+    } finally {
+      setLoading(false);
+    }
+  };
+  const removeRow = (index) => {
+    if (taskRows.length === 1) {
+      toast.error("At least one task required");
+      return;
+    }
+
+    const updated = taskRows.filter((_, i) => i !== index);
+    setTaskRows(updated);
+  };
 
   const [formData, setFormData] = useState({
     project: "",
@@ -413,7 +182,7 @@ function Employee() {
     if (employeeId) {
       fetchFilteredTasks("Week");
     }
-  }, [employeeId,timeFilter]);
+  }, [employeeId, timeFilter]);
 
 
   /* ================= FETCH PROJECTS ================= */
@@ -618,53 +387,63 @@ function Employee() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* LEFT – TABLE (2/3 width) */}
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-orange-100 overflow-hidden">
               <div className="p-6 border-b border-gray-100 flex items-center justify-between">
+
+                {/* LEFT */}
                 <h3 className="text-xl font-bold text-gray-900">Task History</h3>
 
-                {/* Time Filter Dropdown */}
-                <div className="relative">
-                  <button
-                    onClick={() => setShowFilterDropdown(!showFilterDropdown)}
-                    className="flex items-center gap-2 px-4 py-2 border border-orange-200 rounded-lg hover:bg-orange-50 transition-colors"
-                  >
-                    <Filter className="w-4 h-4 text-orange-600" />
-                    <span className="text-sm font-medium text-gray-700">{timeFilter}</span>
-                    <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                    </svg>
-                  </button>
+                {/* RIGHT */}
+                <div className="flex items-center gap-3">
 
+                  {/* Filter */}
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowFilterDropdown(!showFilterDropdown)}
+                      className="flex items-center gap-2 px-4 py-2 border border-orange-200 rounded-lg hover:bg-orange-50 transition-colors"
+                    >
+                      <Filter className="w-4 h-4 text-orange-600" />
+                      <span className="text-sm font-medium text-gray-700">{timeFilter}</span>
+                      <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
 
-                  {showFilterDropdown && (
-                    <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
-                      {["Today", "Week", "Month", "Custom"].map((option) => (
-                        <button
-                          key={option}
-                          onClick={() => {
-                            setTimeFilter(option);
-                            setShowFilterDropdown(false);
-
-                            if (option !== "Custom") {
-                              fetchFilteredTasks(option);
-                            }
-                          }}
-                          className={`w-full text-left px-4 py-2 hover:bg-orange-50 transition-colors first:rounded-t-lg last:rounded-b-lg ${timeFilter === option
+                    {showFilterDropdown && (
+                      <div className="absolute right-0 mt-2 w-40 bg-white border border-gray-200 rounded-lg shadow-lg z-10">
+                        {["Today", "Week", "Month", "Custom"].map((option) => (
+                          <button
+                            key={option}
+                            onClick={() => {
+                              setTimeFilter(option);
+                              setShowFilterDropdown(false);
+                              if (option !== "Custom") fetchFilteredTasks(option);
+                            }}
+                            className={`w-full text-left px-4 py-2 hover:bg-orange-50 ${timeFilter === option
                               ? "bg-orange-100 text-orange-600 font-medium"
                               : "text-gray-700"
-                            }`}
-                        >
-                          {option}
-                        </button>
-                      ))}
-                    </div>
+                              }`}
+                          >
+                            {option}
+                          </button>
+                        ))}
+                      </div>
+                    )}
+                  </div>
 
+                  {/* Log Hours */}
+                  <button
+                    onClick={() => setShowModal(true)}
+                    className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-5 py-2 rounded-lg flex items-center gap-2 hover:shadow-lg"
+                  >
+                    Log Hours
+                  </button>
 
-                  )}
                 </div>
               </div>
+
               {timeFilter === "Custom" && (
                 <div className="flex gap-4 p-4 bg-orange-50 border-b border-orange-100">
                   <input
@@ -758,7 +537,7 @@ function Employee() {
             </div>
 
             {/* RIGHT – FORM (1/3 width) */}
-            <div className="bg-white rounded-xl shadow-sm border border-orange-100 p-6 h-fit">
+            {/* <div className="bg-white rounded-xl shadow-sm border border-orange-100 p-6 h-fit">
               <div className="flex items-center gap-2 mb-6">
                 <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
                   <Plus className="w-5 h-5 text-orange-600" />
@@ -827,7 +606,7 @@ function Employee() {
                   Add Task
                 </button>
               </form>
-            </div>
+            </div> */}
           </div>
         </main>
 
@@ -838,8 +617,96 @@ function Employee() {
           onConfirm={confirmLogout}
         />
       </div>
+      {showModal && (
+        <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50">
+          <div className="bg-white w-[900px] max-h-[90vh] overflow-auto rounded-xl p-6">
+
+            <h2 className="text-xl font-bold mb-4">Log Hours</h2>
+
+            {taskRows.map((row, index) => (
+              <div key={index} className="grid grid-cols-5 gap-3 mb-4">
+
+                {/* project */}
+                <select
+                  value={row.project}
+                  onChange={(e) => handleRowChange(index, "project", e.target.value)}
+                  className="border p-2 rounded"
+                >
+                  <option value="">Project</option>
+                  {projects.map(p => (
+                    <option key={p._id} value={p._id}>{p.project_name}</option>
+                  ))}
+                </select>
+
+                {/* desc */}
+                <input
+                  placeholder="Description"
+                  value={row.description}
+                  onChange={(e) => handleRowChange(index, "description", e.target.value)}
+                  className="border p-2 rounded"
+                />
+
+                {/* time */}
+                <select
+                  value={row.timeWorked}
+                  onChange={(e) => handleRowChange(index, "timeWorked", e.target.value)}
+                  className="border p-2 rounded"
+                >
+                  <option value="">Hours</option>
+                  {timeWorkedOptions.map(o => (
+                    <option key={o.value} value={o.value}>{o.label}</option>
+                  ))}
+                </select>
+
+                {/* date */}
+                <input
+                  type="date"
+                  value={row.date}
+                  onChange={(e) => handleRowChange(index, "date", e.target.value)}
+                  className="border p-2 rounded"
+                />
+                <button
+                  onClick={() => removeRow(index)}
+                  className="bg-red-100 text-red-600 rounded px-3"
+                >
+                  ✕
+                </button>
+
+              </div>
+            ))}
+
+            {/* actions */}
+            <div className="flex justify-between mt-4">
+              <button
+                onClick={addRow}
+                className="bg-gray-200 px-4 py-2 rounded"
+              >
+                Add More
+              </button>
+
+              <div className="flex gap-3">
+                <button
+                  onClick={closeModal}
+                  className="border px-4 py-2 rounded"
+                >
+                  Cancel
+                </button>
+
+                <button
+                  onClick={handleSubmitAll}
+                  className="bg-orange-500 text-white px-4 py-2 rounded"
+                >
+                  Submit
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      )}
+
     </>
   );
 }
 
-export default Employee;
+export default EmployeeDashboard;

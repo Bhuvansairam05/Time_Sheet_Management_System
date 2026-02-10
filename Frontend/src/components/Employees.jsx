@@ -164,30 +164,56 @@ function Employees() {
             setLoading(false);
         }
     };
+const deleteHandler = (id, name) => {
+  toast((t) => (
+    <div className="flex flex-col gap-3">
+      <p className="font-medium">
+        Do you want to delete <span className="font-bold">{name}</span> ?
+      </p>
 
-    const deleteHandler = async (id) => {
-        try {
-            setLoading(true);
-            const token = localStorage.getItem("token");
+      <div className="flex justify-end gap-2">
+        <button
+          onClick={() => toast.dismiss(t.id)}
+          className="px-3 py-1 border rounded"
+        >
+          Cancel
+        </button>
 
-            const response = await fetch(
+        <button
+          onClick={async () => {
+            toast.dismiss(t.id);
+
+            try {
+              setLoading(true);
+              const token = localStorage.getItem("token");
+
+              const response = await fetch(
                 `http://localhost:5000/api/admin/removeUser/${id}`,
                 {
-                    method: "DELETE",
-                    headers: { Authorization: `Bearer ${token}` },
+                  method: "DELETE",
+                  headers: { Authorization: `Bearer ${token}` },
                 }
-            );
+              );
 
-            if (response.ok) {
+              if (response.ok) {
                 toast.success("User deleted");
                 setEmployees((prev) => prev.filter((u) => u._id !== id));
+              }
+            } catch {
+              toast.error("Server error");
+            } finally {
+              setLoading(false);
             }
-        } catch {
-            toast.error("Server error");
-        } finally {
-            setLoading(false);
-        }
-    };
+          }}
+          className="px-3 py-1 bg-red-600 text-white rounded"
+        >
+          Delete
+        </button>
+      </div>
+    </div>
+  ));
+};
+
     const fetchUserDetails = async (userId) => {
 
         try {
@@ -336,9 +362,8 @@ function Employees() {
                                             />
                                             <FaTrash
                                                 className="text-red-600 cursor-pointer"
-                                                onClick={() =>
-                                                    deleteHandler(u._id)
-                                                }
+                                                onClick={() => deleteHandler(u._id, u.name)}
+
                                             />
                                         </div>
                                     </td>

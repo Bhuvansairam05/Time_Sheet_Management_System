@@ -3,15 +3,12 @@ const Project = require("../models/Project");
 const bcrypt = require("bcryptjs");
 const addUser = async (req, res) => {
   try {
-    const { name, email, password, role, is_manager } = req.body;
+    const { name, email, password, role, is_manager, reporting_to } = req.body;
+
     const status = "not_in_project";
-    let reporting_to = null;
-    if (is_manager) {
-      reporting_to = "695e5993d4b364c1748b68cb";
-    }
-    else {
-      reporting_to = req.body.reporting_to;
-    }
+
+    const finalReportingTo = reporting_to || null;
+
     const existingUser = await User.findOne({ email });
     if (existingUser) {
       return res.status(400).json({ message: "User already exists" });
@@ -24,7 +21,7 @@ const addUser = async (req, res) => {
       role,
       status,
       is_manager,
-      reporting_to
+      reporting_to: finalReportingTo
     });
     return res.status(201).json({
       success: true,
@@ -147,7 +144,7 @@ const addProject = async (req, res) => {
     });
   }
 };
-const getProjects = async(req,res)=>{
+const getProjects = async (req, res) => {
   try {
     const projects = await Project.find()
       .populate("manager_id", "name"); // only fetch manager name

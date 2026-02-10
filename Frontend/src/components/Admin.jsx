@@ -7,11 +7,27 @@ import toast from "react-hot-toast";
 import Projects from "./Projects.jsx";
 import AdminDashboard from './AdminDashboard.jsx';
 import Employees from './Employees.jsx';
+import MyTasks from './MyTasks.jsx';
+import { User } from 'lucide-react';
 function Admin() {
   const [showLogoutModal, setShowLogoutModal] = useState(false);
   const [activeTab, setActiveTab] = useState('dashboard');
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
+  const [adminUser,setadminUser] = useState([]);
+  useEffect(() => {
+  const token = localStorage.getItem("token");
+
+  if (token) {
+    const payload = JSON.parse(atob(token.split(".")[1]));
+
+    setadminUser({
+      name: payload.name,
+      userId: payload.userId
+    });
+  }
+}, []);
+
   const handleLogout = () => {
     setShowLogoutModal(true);
   };
@@ -73,6 +89,15 @@ function Admin() {
               >
                 Projects
               </button>
+              <button
+                onClick={() => setActiveTab('mytasks')}
+                className={`px-3 py-2 rounded-md text-sm font-medium transition ${activeTab === 'mytasks'
+                  ? 'text-orange-600 bg-orange-50'
+                  : 'text-gray-700 hover:text-orange-600 hover:bg-gray-50'
+                  }`}
+              >
+                My Tasks
+              </button>
             </div>
 
             {/* Logout Button */}
@@ -112,6 +137,13 @@ function Admin() {
             >
               Projects
             </button>
+            <button
+              onClick={() => setActiveTab('mytasks')}
+              className={`px-3 py-2 text-sm font-medium ${activeTab === 'mytasks' ? 'text-orange-600' : 'text-gray-700'
+                }`}
+            >
+              Projects
+            </button>
           </div>
         </div>
       </nav>
@@ -127,6 +159,9 @@ function Admin() {
         )}
         {activeTab === 'projects' && (
           <Projects/>
+        )}
+        {activeTab==="mytasks" && (
+          <MyTasks user = {adminUser}/>
         )}
       </main>
       <LogoutConfirmModal

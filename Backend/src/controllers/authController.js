@@ -31,7 +31,7 @@ const googleLogin = async (req, res) => {
 
     // ✅ create jwt
     const jwtToken = jwt.sign(
-      { userId: user._id, role: user.role },
+      { userId: user._id, role: user.role, name:user.name},
       process.env.JWT_SECRET,
       { expiresIn: expiry }
     );
@@ -173,7 +173,10 @@ const logoutUser = async (req, res) => {
 }
 const getEmployees = async (req, res) => {
   try {
-    const employees = await User.find({ role: "employee" }).select("-password").lean();
+    const employees = await User.find({ role: { $ne: "admin" } })
+  .select("-password")
+  .lean();
+
     if (!employees) {
       return res.status(404).json({ message: "No employees in organisation" });
     }

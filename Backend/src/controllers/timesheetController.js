@@ -205,7 +205,7 @@ const getAdminDashboardData = async (req, res) => {
     const totalProjects = await Project.countDocuments();
 
     // Active users (assuming status = "active")
-    const activeUsers = await User.countDocuments({ role: "employee" });
+    const activeUsers = await User.countDocuments({ role: {$ne:"admin" }});
 
     // Start & end of current week
     const startOfWeek = new Date();
@@ -338,72 +338,142 @@ const getAdminDashboardData = async (req, res) => {
     });
   }
 }
+// const addTimeSheet = async (req, res) => {
+//   try {
+//     const {
+//       project_id,
+//       manager_id,
+//       employee_id,
+//       start_time,
+//       end_time,
+//       description
+//     } = req.body;
+
+//     /* ---------------- VALIDATIONS ---------------- */
+
+//     if (!project_id || !employee_id || !start_time || !end_time) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Required fields are missing"
+//       });
+//     }
+
+//     const start = new Date(start_time);
+//     const end = new Date(end_time);
+
+//     if (isNaN(start) || isNaN(end)) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "Invalid date format"
+//       });
+//     }
+
+//     if (end <= start) {
+//       return res.status(400).json({
+//         success: false,
+//         message: "End time must be greater than start time"
+//       });
+//     }
+
+//     /* ---------------- CREATE TIMESHEET ---------------- */
+
+//     const newTimesheet = new Timesheet({
+//       project_id,
+//       manager_id,
+//       employee_id,
+//       start_time: start,
+//       end_time: end,
+//       description
+//     });
+
+//     await newTimesheet.save();
+
+//     /* ---------------- SUCCESS RESPONSE ---------------- */
+
+//     res.status(201).json({
+//       success: true,
+//       message: "Timesheet added successfully",
+//       data: newTimesheet
+//     });
+
+//   } catch (error) {
+//     console.error("Add Timesheet Error:", error);
+//     res.status(500).json({
+//       success: false,
+//       message: "Failed to add timesheet"
+//     });
+//   }
+// }
+
 const addTimeSheet = async (req, res) => {
   try {
-    const {
-      project_id,
-      manager_id,
-      employee_id,
-      start_time,
-      end_time,
-      description
-    } = req.body;
+    const { tasks } = req.body;
 
-    /* ---------------- VALIDATIONS ---------------- */
-
-    if (!project_id || !employee_id || !start_time || !end_time) {
+    if (!tasks || !tasks.length) {
       return res.status(400).json({
         success: false,
-        message: "Required fields are missing"
+        message: "No tasks provided"
       });
     }
 
-    const start = new Date(start_time);
-    const end = new Date(end_time);
+    const documents = [];
 
-    if (isNaN(start) || isNaN(end)) {
-      return res.status(400).json({
-        success: false,
-        message: "Invalid date format"
+    for (const task of tasks) {
+      const {
+        project_id,
+        manager_id,
+        employee_id,
+        start_time,
+        end_time,
+        description,
+        date
+      } = task;
+
+      if (!project_id || !employee_id || !start_time || !end_time) {
+        return res.status(400).json({
+          success: false,
+          message: "Required fields missing in some tasks"
+        });
+      }
+
+      const start = new Date(start_time);
+      const end = new Date(end_time);
+
+      if (end <= start) {
+        return res.status(400).json({
+          success: false,
+          message: "End time must be greater than start time"
+        });
+      }
+
+      documents.push({
+        project_id,
+        manager_id,
+        employee_id,
+        start_time: start,
+        end_time: end,
+        description,
+        date: date ? new Date(date) : new Date()
       });
     }
 
-    if (end <= start) {
-      return res.status(400).json({
-        success: false,
-        message: "End time must be greater than start time"
-      });
-    }
-
-    /* ---------------- CREATE TIMESHEET ---------------- */
-
-    const newTimesheet = new Timesheet({
-      project_id,
-      manager_id,
-      employee_id,
-      start_time: start,
-      end_time: end,
-      description
-    });
-
-    await newTimesheet.save();
-
-    /* ---------------- SUCCESS RESPONSE ---------------- */
+    await Timesheet.insertMany(documents);
 
     res.status(201).json({
       success: true,
-      message: "Timesheet added successfully",
-      data: newTimesheet
+      message: "Timesheets added successfully"
     });
 
   } catch (error) {
     console.error("Add Timesheet Error:", error);
     res.status(500).json({
       success: false,
-      message: "Failed to add timesheet"
+      message: "Failed to add timesheets"
     });
   }
-}
+};
+
+
 const getManagerEmployeesTimeSummary = async (req, res) => {
   try {
     const managerId = req.user.userId;
@@ -720,6 +790,76 @@ const getFilteredTimesheet = async (req, res) => {
   }
 };
 
+const getProjectEmployeesForManager = async (req, res) => {
+  try {
+    const managerId = req.user.userId;
+    const { projectId } = req.params;
+    const { filter, from, to } = req.query;
+
+    const { start, end } = getDateRange(filter, from, to);
+
+    const data = await Timesheet.aggregate([
+      {
+        $match: {
+          project_id: new mongoose.Types.ObjectId(projectId),
+          manager_id: new mongoose.Types.ObjectId(managerId),
+          start_time: { $lt: end },
+          end_time: { $gt: start }
+        }
+      },
+      {
+        $project: {
+          employee_id: 1,
+          duration: { $subtract: ["$end_time", "$start_time"] }
+        }
+      },
+      {
+        $group: {
+          _id: "$employee_id",
+          totalTime: { $sum: "$duration" }
+        }
+      },
+      {
+        $lookup: {
+          from: "users",
+          localField: "_id",
+          foreignField: "_id",
+          as: "employee"
+        }
+      },
+      { $unwind: "$employee" },
+      {
+        $project: {
+          _id: "$employee._id",
+          name: "$employee.name",
+          email: "$employee.email",
+          totalTime: 1
+        }
+      }
+    ]);
+
+    res.json({ success: true, data });
+
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Failed" });
+  }
+};
+const getManagerProjects = async (req, res) => {
+  try {
+    const managerId = req.user.userId;
+
+    const projects = await Project.find(
+      { manager_id: managerId },
+      { project_name: 1 }
+    );
+
+    res.json({ success: true, data: projects });
+  } catch {
+    res.status(500).json({ success: false });
+  }
+};
+
 
 module.exports = {
   getUsersTimeSummary,
@@ -731,5 +871,7 @@ module.exports = {
   getManagerEmployeeProjectDetails,
   getEmployeeTimesheet,
   getProjectsList,
-  getFilteredTimesheet
+  getFilteredTimesheet,
+  getProjectEmployeesForManager,
+  getManagerProjects
 };
