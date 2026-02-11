@@ -245,7 +245,7 @@ function ManagerDashboard({ user }) {
             onClick={handleExpandAll}
             className="bg-blue-600 text-white px-4 py-2 rounded"
           >
-            Details
+            Expand All
           </button>
         </div>
         <table className="min-w-full border rounded-lg">
@@ -367,7 +367,7 @@ function ManagerDashboard({ user }) {
               onClick={handleProjectExpandAll}
               className="bg-blue-600 text-white px-4 py-2 rounded ml-3"
             >
-              Details
+              Expand All
             </button>
 
             {/* Dropdown */}
@@ -385,7 +385,7 @@ function ManagerDashboard({ user }) {
             </select>
 
             {/* FILTER */}
-            <div className="mb-4">
+            {/* <div className="mb-4">
               <select
                 value={projectFilter}
                 onChange={(e) => setProjectFilter(e.target.value)}
@@ -415,31 +415,48 @@ function ManagerDashboard({ user }) {
               )}
 
 
-              {filter === "custom" && (
-                <>
-                  <input
-                    type="date"
-                    value={fromDate}
-                    onChange={(e) => setFromDate(e.target.value)}
-                    className="border ml-2"
-                  />
-                  <input
-                    type="date"
-                    value={toDate}
-                    onChange={(e) => setToDate(e.target.value)}
-                    className="border ml-2"
-                  />
-                </>
-              )}
-            </div>
+            </div> */}
 
             {/* TABLE */}
-            <table className="min-w-full border">
+            <table className="min-w-full border rounded-lg">
               <thead className="bg-gray-100">
                 <tr>
-                  <th className="px-4 py-2">S.No</th>
-                  <th className="px-4 py-2">Employee</th>
-                  <th className="px-4 py-2">Time</th>
+                  <th className="px-4 py-3">S.No</th>
+                  <th className="px-4 py-3">Employee Name</th>
+                  <th className="px-4 py-3 text-center">
+                    <div className="flex flex-col items-center gap-1">
+                       <span className="">Time Worked</span>
+                      <select
+                        value={projectFilter}
+                        onChange={(e) => setProjectFilter(e.target.value)}
+                        className="border rounded px-2 py-1 text-sm"
+                      >
+                        <option value="day">Today</option>
+                        <option value="week">Week</option>
+                        <option value="month">Month</option>
+                        <option value="custom">Custom</option>
+                      </select>
+
+                      {projectFilter === "custom" && (
+                        <div className="flex gap-1">
+                          <input
+                            type="date"
+                            value={projectFromDate}
+                            onChange={(e) => setProjectFromDate(e.target.value)}
+                            className="border rounded px-1 text-xs"
+                          />
+                          <input
+                            type="date"
+                            value={projectToDate}
+                            onChange={(e) => setProjectToDate(e.target.value)}
+                            className="border rounded px-1 text-xs"
+                          />
+                        </div>
+                      )}
+
+
+                    </div>
+                  </th>
                 </tr>
               </thead>
 
@@ -491,8 +508,6 @@ function ManagerDashboard({ user }) {
           </div>
         )}
 
-        {/* PROJECT WISE */}
-       
 
       </div>
     </>

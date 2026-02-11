@@ -3,7 +3,7 @@ const Project = require("../models/Project");
 const bcrypt = require("bcryptjs");
 const addUser = async (req, res) => {
   try {
-    const { name, email, password, role, is_manager, reporting_to } = req.body;
+    const { name, email, password, role, reporting_to } = req.body;
 
     const status = "not_in_project";
 
@@ -20,7 +20,6 @@ const addUser = async (req, res) => {
       password: hashedPassword,
       role,
       status,
-      is_manager,
       reporting_to: finalReportingTo
     });
     return res.status(201).json({
@@ -32,33 +31,146 @@ const addUser = async (req, res) => {
     return res.status(500).json({ message: "500 server not found" });
   }
 };
+// const updateUser = async (req, res) => {
+//   try {
+//     const { userId } = req.params;
+//     const { name, email, password, role, status, is_manager } = req.body;
+//     let reporting_to = null;
+//     if (is_manager) {
+//       reporting_to = "695e5993d4b364c1748b68cb";
+//     }
+//     else {
+//       reporting_to = req.body.reporting_to;
+//     }
+//     const user = await User.findById(userId);
+//     if (!user) {
+//       return res.status(404).json({
+//         success: false,
+//         message: "User not found"
+//       });
+//     }
+//     // Update fields only if provided
+//     if (name) user.name = name;
+//     if (email) user.email = email;
+//     if (role) user.role = role;
+//     if (status) user.status = status;
+//     if (typeof is_manager === "boolean") user.is_manager = is_manager;
+//     if (reporting_to) user.reporting_to = reporting_to;
+
+//     // If password is updated, hash it again
+//     if (password) {
+//       user.password = await bcrypt.hash(password, 10);
+//     }
+
+//     await user.save();
+
+//     return res.status(200).json({
+//       success: true,
+//       message: "User updated successfully"
+//     });
+//   }
+//   catch (Exception) {
+//     return res.status(500).json({ message: "500 server not found" });
+//   }
+// };
+const transferRespons = async (req, res) => {
+  try {
+    const { oldManagerId, newManagerId } = req.body;
+
+    // basic validation
+    if (!oldManagerId || !newManagerId) {
+      return res.status(400).json({
+        success: false,
+        message: "Old and new manager required",
+      });
+    }
+
+    if (oldManagerId === newManagerId) {
+      return res.status(400).json({
+        success: false,
+        message: "Both managers cannot be same",
+      });
+    }
+
+    // check managers exist
+    const oldManager = await User.findById(oldManagerId);
+    const newManager = await User.findById(newManagerId);
+
+    if (!oldManager || !newManager) {
+      return res.status(404).json({
+        success: false,
+        message: "Manager not found",
+      });
+    }
+
+    /* ======================================
+       1️⃣ TRANSFER PROJECTS
+    ====================================== */
+    await Project.updateMany(
+      { manager_id: oldManagerId },
+      { $set: { manager_id: newManagerId } }
+    );
+
+    /* ======================================
+       2️⃣ TRANSFER EMPLOYEES
+    ====================================== */
+    await User.updateMany(
+      { reporting_to: oldManagerId },
+      { $set: { reporting_to: newManagerId } }
+    );
+
+    /* ======================================
+       3️⃣ TRANSFER TIMESHEETS
+    ====================================== */
+    await Timesheet.updateMany(
+      { manager_id: oldManagerId },
+      { $set: { manager_id: newManagerId } }
+    );
+
+    return res.status(200).json({
+      success: true,
+      message: "Responsibilities transferred successfully",
+    });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+};
+
+module.exports = { transferRespons };
 const updateUser = async (req, res) => {
   try {
     const { userId } = req.params;
-    const { name, email, password, role, status, is_manager } = req.body;
-    let reporting_to = null;
-    if (is_manager) {
-      reporting_to = "695e5993d4b364c1748b68cb";
-    }
-    else {
-      reporting_to = req.body.reporting_to;
-    }
+    const { name, email, password, role, status, reporting_to } = req.body;
+
     const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "User not found"
+        message: "User not found",
       });
     }
-    // Update fields only if provided
+    // Update normal fields
     if (name) user.name = name;
     if (email) user.email = email;
     if (role) user.role = role;
     if (status) user.status = status;
-    if (typeof is_manager === "boolean") user.is_manager = is_manager;
-    if (reporting_to) user.reporting_to = reporting_to;
 
-    // If password is updated, hash it again
+    // 🎯 VALIDATION
+    if (role === "employee" && !reporting_to) {
+      return res.status(400).json({
+        success: false,
+        message: "Reporting manager is required for employees",
+      });
+    }
+
+    // optional for others
+    user.reporting_to = reporting_to || null;
+
+    // password
     if (password) {
       user.password = await bcrypt.hash(password, 10);
     }
@@ -67,11 +179,14 @@ const updateUser = async (req, res) => {
 
     return res.status(200).json({
       success: true,
-      message: "User updated successfully"
+      message: "User updated successfully",
     });
-  }
-  catch (Exception) {
-    return res.status(500).json({ message: "500 server not found" });
+
+  } catch (err) {
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
   }
 };
 const removeUser = async (req, res) => {
@@ -117,7 +232,7 @@ const addProject = async (req, res) => {
     }
 
     // (optional but recommended)
-    if (!manager.is_manager) {
+    if (!manager.role==="manager") {
       return res.status(400).json({
         message: "Selected user is not a manager",
       });
@@ -204,4 +319,4 @@ const endProject = async (req, res) => {
 };
 const deleteProject = async (req, res) => { }
 const updateProject = async (req, res) => { }
-module.exports = { addUser, updateUser, removeUser, getProjects, addProject, deleteProject, updateProject, endProject };
+module.exports = { addUser,transferRespons, updateUser, removeUser, getProjects, addProject, deleteProject, updateProject, endProject };

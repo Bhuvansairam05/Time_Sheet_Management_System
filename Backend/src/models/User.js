@@ -20,10 +20,6 @@ const UserSchema = new mongoose.Schema({
         type:String,
         required:true
     },
-    is_manager:{
-        type:Boolean,
-        required:true
-    },
     reporting_to:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"User"

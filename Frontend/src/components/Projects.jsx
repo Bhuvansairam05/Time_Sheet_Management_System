@@ -63,7 +63,7 @@ function Projects() {
       if (result.success) {
         // ⚠️ TEMP: filtering here
         const availableManagers = result.data.filter(
-          (u) => u.is_manager && u.status === "not_in_project"
+          (u) => u.role==="manager"
         );
         setManagers(availableManagers);
       }

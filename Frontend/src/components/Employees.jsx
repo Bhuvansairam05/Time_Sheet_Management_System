@@ -4,7 +4,7 @@ import Loader from "./Loader.jsx";
 import toast from "react-hot-toast";
 import EditUserModal from "./EditUserModal.jsx";
 import { FaEdit, FaTrash } from "react-icons/fa";
-
+import TransferManagerModal from "./TransferManagerModal.jsx";
 function Employees() {
     const [showAddUserModal, setShowAddUserModal] = useState(false);
     const [users, setEmployees] = useState([]);
@@ -12,6 +12,11 @@ function Employees() {
     const [loading, setLoading] = useState(false);
     const [showEditModal, setShowEditModal] = useState(false);
     const [selectedUser, setSelectedUser] = useState(null);
+    const [showTransferModal, setShowTransferModal] = useState(false);
+    const [managerToTransfer, setManagerToTransfer] = useState(null);
+    const [managerProjects, setManagerProjects] = useState([]);
+    const [pendingAction, setPendingAction] = useState(null);
+    const [pendingUpdateData, setPendingUpdateData] = useState(null);
 
     // ⏱ filters
     const [filter, setFilter] = useState("week");
@@ -71,33 +76,96 @@ function Employees() {
             }));
 
             setEmployees(merged);
-            setManagers(merged.filter((u) => u.is_manager));
+            setManagers(merged.filter((u) => u.role==="manager"));
         } catch {
             toast.error("Error loading employees");
         } finally {
             setLoading(false);
         }
     };
+    const actualDelete = async (id, name) => {
+        toast((t) => (
+            <div className="flex flex-col gap-3">
+                <p>
+                    Delete <b>{name}</b> ?
+                </p>
+
+                <div className="flex justify-end gap-2">
+                    <button
+                        onClick={() => toast.dismiss(t.id)}
+                        className="px-3 py-1 border rounded"
+                    >
+                        Cancel
+                    </button>
+
+                    <button
+                        onClick={async () => {
+                            toast.dismiss(t.id);
+                            try {
+                                setLoading(true);
+                                const token = localStorage.getItem("token");
+
+                                await fetch(
+                                    `http://localhost:5000/api/admin/removeUser/${id}`,
+                                    {
+                                        method: "DELETE",
+                                        headers: { Authorization: `Bearer ${token}` },
+                                    }
+                                );
+
+                                toast.success("User deleted");
+                                fetchEmployeesWithTime();
+                            } catch {
+                                toast.error("Server error");
+                            } finally {
+                                setLoading(false);
+                            }
+                        }}
+                        className="px-3 py-1 bg-red-600 text-white rounded"
+                    >
+                        Delete
+                    </button>
+                </div>
+            </div>
+        ));
+    };
 
     useEffect(() => {
         fetchEmployeesWithTime();
     }, [filter, fromDate, toDate, showAddUserModal]);
     useEffect(() => {
-    setDetailsData({});
-    setExpandedRows({});
-    setExpandAll(false);
-    const refetchExpandedUsers = async () => {
-        for (const userId of Object.keys(expandedRows)) {
-            if (expandedRows[userId]) {
-                await fetchUserDetails(userId);
+        setDetailsData({});
+        setExpandedRows({});
+        setExpandAll(false);
+        const refetchExpandedUsers = async () => {
+            for (const userId of Object.keys(expandedRows)) {
+                if (expandedRows[userId]) {
+                    await fetchUserDetails(userId);
+                }
             }
+        };
+
+        if (Object.keys(expandedRows).length > 0) {
+            refetchExpandedUsers();
+        }
+    }, [filter, fromDate, toDate]);
+    const fetchManagerProjects = async (managerId) => {
+        try {
+            const token = localStorage.getItem("token");
+
+            const res = await fetch(
+                `http://localhost:5000/api/projects/byManager/${managerId}`,
+                {
+                    headers: { Authorization: `Bearer ${token}` },
+                }
+            );
+
+            const data = await res.json();
+            setManagerProjects(data.data || []);
+        } catch {
+            toast.error("Failed to load projects");
         }
     };
-
-    if (Object.keys(expandedRows).length > 0) {
-        refetchExpandedUsers();
-    }
-}, [filter, fromDate, toDate]);
 
 
     /* ===============================
@@ -135,8 +203,20 @@ function Employees() {
             setLoading(false);
         }
     };
-
     const updateHandler = async (userId, updatedData) => {
+        const oldUser = users.find((u) => u._id === userId);
+
+        if (oldUser.role === "manager" && updatedData.role !== "manager") {
+            setManagerToTransfer(oldUser);
+            setPendingAction("roleChange");
+            setPendingUpdateData(updatedData);
+            setShowTransferModal(true);
+            return;
+        }
+
+        normalUpdate(userId, updatedData);
+    };
+    const normalUpdate = async (userId, updatedData) => {
         try {
             setLoading(true);
             const token = localStorage.getItem("token");
@@ -164,55 +244,135 @@ function Employees() {
             setLoading(false);
         }
     };
-const deleteHandler = (id, name) => {
-  toast((t) => (
-    <div className="flex flex-col gap-3">
-      <p className="font-medium">
-        Do you want to delete <span className="font-bold">{name}</span> ?
-      </p>
 
-      <div className="flex justify-end gap-2">
-        <button
-          onClick={() => toast.dismiss(t.id)}
-          className="px-3 py-1 border rounded"
-        >
-          Cancel
-        </button>
 
-        <button
-          onClick={async () => {
-            toast.dismiss(t.id);
+    // const updateHandler = async (userId, updatedData) => {
+    //     try {
+    //         setLoading(true);
+    //         const token = localStorage.getItem("token");
 
-            try {
-              setLoading(true);
-              const token = localStorage.getItem("token");
+    //         const response = await fetch(
+    //             `http://localhost:5000/api/admin/updateUser/${userId}`,
+    //             {
+    //                 method: "PUT",
+    //                 headers: {
+    //                     "Content-Type": "application/json",
+    //                     Authorization: `Bearer ${token}`,
+    //                 },
+    //                 body: JSON.stringify(updatedData),
+    //             }
+    //         );
 
-              const response = await fetch(
-                `http://localhost:5000/api/admin/removeUser/${id}`,
-                {
-                  method: "DELETE",
-                  headers: { Authorization: `Bearer ${token}` },
-                }
-              );
+    //         if (response.ok) {
+    //             toast.success("User updated");
+    //             setShowEditModal(false);
+    //             fetchEmployeesWithTime();
+    //         }
+    //     } catch {
+    //         toast.error("Server error");
+    //     } finally {
+    //         setLoading(false);
+    //     }
+    // };
+    // const deleteHandler = (id, name) => {
+    //     toast((t) => (
+    //         <div className="flex flex-col gap-3">
+    //             <p className="font-medium">
+    //                 Do you want to delete <span className="font-bold">{name}</span> ?
+    //             </p>
 
-              if (response.ok) {
-                toast.success("User deleted");
-                setEmployees((prev) => prev.filter((u) => u._id !== id));
-              }
-            } catch {
-              toast.error("Server error");
-            } finally {
-              setLoading(false);
-            }
-          }}
-          className="px-3 py-1 bg-red-600 text-white rounded"
-        >
-          Delete
-        </button>
-      </div>
-    </div>
-  ));
+    //             <div className="flex justify-end gap-2">
+    //                 <button
+    //                     onClick={() => toast.dismiss(t.id)}
+    //                     className="px-3 py-1 border rounded"
+    //                 >
+    //                     Cancel
+    //                 </button>
+
+    //                 <button
+    //                     onClick={async () => {
+    //                         toast.dismiss(t.id);
+
+    //                         try {
+    //                             setLoading(true);
+    //                             const token = localStorage.getItem("token");
+
+    //                             const response = await fetch(
+    //                                 `http://localhost:5000/api/admin/removeUser/${id}`,
+    //                                 {
+    //                                     method: "DELETE",
+    //                                     headers: { Authorization: `Bearer ${token}` },
+    //                                 }
+    //                             );
+
+    //                             if (response.ok) {
+    //                                 toast.success("User deleted");
+    //                                 setEmployees((prev) => prev.filter((u) => u._id !== id));
+    //                             }
+    //                         } catch {
+    //                             toast.error("Server error");
+    //                         } finally {
+    //                             setLoading(false);
+    //                         }
+    //                     }}
+    //                     className="px-3 py-1 bg-red-600 text-white rounded"
+    //                 >
+    //                     Delete
+    //                 </button>
+    //             </div>
+    //         </div>
+    //     ));
+    // };
+   const handleTransferConfirm = async (newManagerId) => {
+  try {
+    const token = localStorage.getItem("token");
+
+    await fetch(`http://localhost:5000/api/admin/transferResponsibilities`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        oldManagerId: managerToTransfer._id,
+        newManagerId,
+      }),
+    });
+
+    toast.success("Responsibilities transferred");
+
+    setShowTransferModal(false);
+
+    // 🎯 CONTINUE ORIGINAL ACTION
+    if (pendingAction === "delete") {
+      actualDelete(managerToTransfer._id, managerToTransfer.name);
+    }
+
+    if (pendingAction === "roleChange") {
+      normalUpdate(managerToTransfer._id, pendingUpdateData);
+    }
+
+    // reset
+    setPendingAction(null);
+    setPendingUpdateData(null);
+
+  } catch {
+    toast.error("Transfer failed");
+  }
 };
+
+
+
+    const deleteHandler = (user) => {
+        if (user.role === "manager") {
+            setManagerToTransfer(user);
+            setPendingAction("delete");
+            setShowTransferModal(true);
+            return;
+        }
+
+        actualDelete(user._id, user.name);
+    };
 
     const fetchUserDetails = async (userId) => {
 
@@ -343,7 +503,7 @@ const deleteHandler = (id, name) => {
                                         {u.name}
                                     </td>
                                     <td className="px-4 py-3">
-                                        {u.is_manager ? "Yes" : "No"}
+                                        {u.role==="manager" ? "Yes" : "No"}
                                     </td>
                                     <td className="px-4 py-3 text-center">
                                         {formatTime(u.timeWorked)}
@@ -362,7 +522,8 @@ const deleteHandler = (id, name) => {
                                             />
                                             <FaTrash
                                                 className="text-red-600 cursor-pointer"
-                                                onClick={() => deleteHandler(u._id, u.name)}
+                                                onClick={() => deleteHandler(u)}
+
 
                                             />
                                         </div>
@@ -421,6 +582,15 @@ const deleteHandler = (id, name) => {
                     onSubmit={handleAddUser}
                     managers={managers}
                 />
+                <TransferManagerModal
+                    isOpen={showTransferModal}
+                    onClose={() => setShowTransferModal(false)}
+                    manager={managerToTransfer}
+                    managers={managers}
+                    projects={managerProjects}
+                    onConfirm={handleTransferConfirm}
+                />
+
             </div>
         </>
     );

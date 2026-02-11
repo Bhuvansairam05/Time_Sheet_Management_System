@@ -6,7 +6,6 @@ const initialFormData = {
   email: "",
   password: "",
   role: "employee",
-  is_manager: false,
   reporting_to: "",
 };
 
@@ -25,25 +24,24 @@ function AddUserModal({ isOpen, onClose, onSubmit, managers }) {
   }
 
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+  const { name, value } = e.target;
 
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-      ...(name === "is_manager" && checked ? { reporting_to: "" } : {}),
-    }));
-  };
+  setFormData((prev) => ({
+    ...prev,
+    [name]: value,
+  }));
+};
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    const isManager = formData.role === "manager";
 
 const payload = {
   ...formData,
-  is_manager: isManager,
-  reporting_to: formData.reporting_to || null
+  reporting_to: formData.reporting_to || null,
 };
+
 
 
     onSubmit(payload);

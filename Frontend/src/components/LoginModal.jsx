@@ -49,7 +49,6 @@ function LoginModal({ isOpen, onClose }) {
         const result = await response.json();
         if (response.ok) {
           const role = result.user.role;
-          const is_manager = result.user.is_manager;
 
           toast.success("Login successful 🎉", {
             style: {
@@ -72,7 +71,7 @@ function LoginModal({ isOpen, onClose }) {
                 user: result.user
               }
             });
-          } else if (is_manager) {
+          } else if (role=="manager") {
             navigate("/manager/dashboard", {
               state: { user: result.user }
             });
@@ -126,7 +125,6 @@ function LoginModal({ isOpen, onClose }) {
         toast.success("Login successful 🎉");
 
         const role = data.user.role;
-        const is_manager = data.user.is_manager;
 
         localStorage.setItem("token", data.token);
         localStorage.setItem("role", role);
@@ -136,7 +134,7 @@ function LoginModal({ isOpen, onClose }) {
           navigate("/admin/dashboard", {
             state: { user: data.user }
           });
-        } else if (is_manager) {
+        } else if (role==="manager") {
           navigate("/manager/dashboard", {
             state: { user: data.user }
           });

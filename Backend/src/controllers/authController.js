@@ -45,8 +45,7 @@ const googleLogin = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role,
-        is_manager: user.is_manager
+        role: user.role
       }
     });
 
@@ -128,8 +127,7 @@ const loginUser = async (req, res) => {
         id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role,
-        is_manager: user.is_manager
+        role: user.role
       }
     });
   }

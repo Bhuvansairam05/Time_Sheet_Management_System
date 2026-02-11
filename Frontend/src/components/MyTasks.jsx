@@ -478,9 +478,9 @@ function MyTasks() {
 
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <StatCard title="Today's Hours" value={stats.todayHours} icon={<Clock />} />
-            <StatCard title="Total Hours" value={stats.totalHours} icon={<Calendar />} />
-            <StatCard title="Total Tasks" value={stats.totalTasks} icon={<TrendingUp />} />
+            <StatCard title="Today's Hours" value={stats.todayHours} icon={<Clock />} timeFilter={timeFilter}/>
+            <StatCard title="Total Hours" value={stats.totalHours} icon={<Calendar />} timeFilter={timeFilter}/>
+            <StatCard title="Total Tasks" value={stats.totalTasks} icon={<TrendingUp />} timeFilter={timeFilter}/>
           </div>
 
           {/* TABLE */}
@@ -676,7 +676,7 @@ function MyTasks() {
   );
 }
 
-const StatCard = ({ title, value, icon }) => (
+const StatCard = ({ title, value, icon,timeFilter }) => (
   <div className="bg-white rounded-xl shadow-sm border border-orange-100 p-6 hover:shadow-md transition-shadow">
     <div className="flex items-center justify-between">
       <div>
@@ -687,6 +687,7 @@ const StatCard = ({ title, value, icon }) => (
         {icon}
       </div>
     </div>
+    <p className="text-left text-sm text-gray-600 mb-1">{(title!=="Today's Hours")?"this "+timeFilter:""}</p>
   </div>
 );
 

@@ -80,7 +80,6 @@ const getUsersTimeSummary = async (req, res) => {
     const result = users.map(u => ({
       _id: u._id,
       name: u.name,
-      is_manager: u.is_manager,
       totalTime: timeMap[u._id.toString()] || 0
     }));
 
