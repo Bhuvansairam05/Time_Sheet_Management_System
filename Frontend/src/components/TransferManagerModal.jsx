@@ -21,8 +21,6 @@ function TransferManagerModal({
         <p className="text-sm text-gray-600 mb-2">
           Select another manager to reassign responsibilities.
         </p>
-
-        {/* Manager dropdown */}
         <select
           value={newManager}
           onChange={(e) => setNewManager(e.target.value)}
@@ -37,8 +35,6 @@ function TransferManagerModal({
               </option>
             ))}
         </select>
-
-        {/* Projects */}
         <div className="max-h-40 overflow-auto border p-2 rounded mb-4">
           {projects.map((p) => (
             <p key={p._id} className="text-sm">

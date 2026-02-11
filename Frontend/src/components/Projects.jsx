@@ -6,13 +6,7 @@ function Projects() {
   const [projects, setProjects] = useState([]);
   const [managers, setManagers] = useState([]);
   const [loading, setLoading] = useState(false);
-
-  // 🔹 modal state
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
-
-  /* ===============================
-     FETCH PROJECTS
-  ================================ */
   const fetchProjects = async () => {
     try {
       setLoading(true);
@@ -42,11 +36,6 @@ function Projects() {
       setLoading(false);
     }
   };
-
-  /* ===============================
-     FETCH MANAGERS (not_in_project)
-     (temporary frontend filter)
-  ================================ */
   const fetchManagers = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -61,7 +50,6 @@ function Projects() {
       const result = await res.json();
 
       if (result.success) {
-        // ⚠️ TEMP: filtering here
         const availableManagers = result.data.filter(
           (u) => u.role==="manager"
         );
@@ -76,10 +64,6 @@ function Projects() {
     fetchProjects();
     fetchManagers();
   }, []);
-
-  /* ===============================
-     ADD PROJECT (UI ONLY FOR NOW)
-  ================================ */
  const handleAddProject = async (projectData) => {
   try {
     setLoading(true);
@@ -103,15 +87,9 @@ function Projects() {
       toast.error(result.message || "Failed to add project");
       return;
     }
-
-    // ✅ SUCCESS FLOW
     fetchProjects();
     toast.success("Project created successfully");
-
-    // ✅ CLOSE MODAL (THIS WAS THE ISSUE)
     setShowAddProjectModal(false);
-
-    // refresh data
     fetchProjects();
     fetchManagers();
 
@@ -135,7 +113,6 @@ function Projects() {
 
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
-      {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-2xl font-bold text-gray-800">Projects</h2>
 
@@ -146,8 +123,6 @@ function Projects() {
           + Add Project
         </button>
       </div>
-
-      {/* Table */}
       <div className="overflow-x-auto">
         <table className="min-w-full border border-gray-200 rounded-lg">
           <thead className="bg-gray-100">
@@ -213,8 +188,6 @@ function Projects() {
           </tbody>
         </table>
       </div>
-
-      {/* ✅ ADD PROJECT MODAL */}
       <AddProjectModal
         isOpen={showAddProjectModal}
         onClose={() => setShowAddProjectModal(false)}

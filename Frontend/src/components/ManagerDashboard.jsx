@@ -162,9 +162,7 @@ function ManagerDashboard({ user }) {
     }
   };
   useEffect(() => {
-    // console.log(user); This is executing 
     if (user?.id) {
-      // console.log(user); This is executing
       fetchTeamWithTime();
     }
   }, [filter, toDate, user]);
@@ -184,10 +182,6 @@ function ManagerDashboard({ user }) {
       refetchExpandedDetails();
     }
   }, [filter, fromDate, toDate]);
-
-  /* ===============================
-     FETCH EMPLOYEE → PROJECT DETAILS
-  ================================ */
   const fetchEmployeeDetails = async (employeeId) => {
     if (detailsData[employeeId]?.filter === filter) return;
     try {
@@ -236,7 +230,6 @@ function ManagerDashboard({ user }) {
     <>
       {loading && <Loader />}
       <div className="bg-white rounded-lg shadow-md p-6">
-        {/* Header */}
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-800">
             {user?.name} here is your team
@@ -369,8 +362,6 @@ function ManagerDashboard({ user }) {
             >
               Expand All
             </button>
-
-            {/* Dropdown */}
             <select
               value={selectedProject}
               onChange={(e) => setSelectedProject(e.target.value)}
@@ -383,41 +374,6 @@ function ManagerDashboard({ user }) {
                 </option>
               ))}
             </select>
-
-            {/* FILTER */}
-            {/* <div className="mb-4">
-              <select
-                value={projectFilter}
-                onChange={(e) => setProjectFilter(e.target.value)}
-                className="border px-2 py-1 ml-3"
-              >
-                <option value="day">Today</option>
-                <option value="week">Week</option>
-                <option value="month">Month</option>
-                <option value="custom">Custom</option>
-              </select>
-
-              {projectFilter === "custom" && (
-                <>
-                  <input
-                    type="date"
-                    value={projectFromDate}
-                    onChange={(e) => setProjectFromDate(e.target.value)}
-                    className="border ml-2"
-                  />
-                  <input
-                    type="date"
-                    value={projectToDate}
-                    onChange={(e) => setProjectToDate(e.target.value)}
-                    className="border ml-2"
-                  />
-                </>
-              )}
-
-
-            </div> */}
-
-            {/* TABLE */}
             <table className="min-w-full border rounded-lg">
               <thead className="bg-gray-100">
                 <tr>

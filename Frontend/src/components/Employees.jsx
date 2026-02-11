@@ -17,13 +17,9 @@ function Employees() {
     const [managerProjects, setManagerProjects] = useState([]);
     const [pendingAction, setPendingAction] = useState(null);
     const [pendingUpdateData, setPendingUpdateData] = useState(null);
-
-    // ⏱ filters
     const [filter, setFilter] = useState("week");
     const [fromDate, setFromDate] = useState("");
     const [toDate, setToDate] = useState("");
-
-    // 🔽 expand logic
     const [expandedRows, setExpandedRows] = useState({});
     const [expandAll, setExpandAll] = useState(false);
     const [detailsData, setDetailsData] = useState({});
@@ -39,10 +35,6 @@ function Employees() {
             .toString()
             .padStart(2, "0")}`;
     };
-
-    /* ===============================
-       FETCH EMPLOYEES + TIME
-    ================================ */
     const fetchEmployeesWithTime = async () => {
         try {
             setLoading(true);
@@ -166,11 +158,6 @@ function Employees() {
             toast.error("Failed to load projects");
         }
     };
-
-
-    /* ===============================
-       ADD / UPDATE / DELETE
-    ================================ */
     const handleAddUser = async (userData) => {
         try {
             setLoading(true);
@@ -245,85 +232,7 @@ function Employees() {
         }
     };
 
-
-    // const updateHandler = async (userId, updatedData) => {
-    //     try {
-    //         setLoading(true);
-    //         const token = localStorage.getItem("token");
-
-    //         const response = await fetch(
-    //             `http://localhost:5000/api/admin/updateUser/${userId}`,
-    //             {
-    //                 method: "PUT",
-    //                 headers: {
-    //                     "Content-Type": "application/json",
-    //                     Authorization: `Bearer ${token}`,
-    //                 },
-    //                 body: JSON.stringify(updatedData),
-    //             }
-    //         );
-
-    //         if (response.ok) {
-    //             toast.success("User updated");
-    //             setShowEditModal(false);
-    //             fetchEmployeesWithTime();
-    //         }
-    //     } catch {
-    //         toast.error("Server error");
-    //     } finally {
-    //         setLoading(false);
-    //     }
-    // };
-    // const deleteHandler = (id, name) => {
-    //     toast((t) => (
-    //         <div className="flex flex-col gap-3">
-    //             <p className="font-medium">
-    //                 Do you want to delete <span className="font-bold">{name}</span> ?
-    //             </p>
-
-    //             <div className="flex justify-end gap-2">
-    //                 <button
-    //                     onClick={() => toast.dismiss(t.id)}
-    //                     className="px-3 py-1 border rounded"
-    //                 >
-    //                     Cancel
-    //                 </button>
-
-    //                 <button
-    //                     onClick={async () => {
-    //                         toast.dismiss(t.id);
-
-    //                         try {
-    //                             setLoading(true);
-    //                             const token = localStorage.getItem("token");
-
-    //                             const response = await fetch(
-    //                                 `http://localhost:5000/api/admin/removeUser/${id}`,
-    //                                 {
-    //                                     method: "DELETE",
-    //                                     headers: { Authorization: `Bearer ${token}` },
-    //                                 }
-    //                             );
-
-    //                             if (response.ok) {
-    //                                 toast.success("User deleted");
-    //                                 setEmployees((prev) => prev.filter((u) => u._id !== id));
-    //                             }
-    //                         } catch {
-    //                             toast.error("Server error");
-    //                         } finally {
-    //                             setLoading(false);
-    //                         }
-    //                     }}
-    //                     className="px-3 py-1 bg-red-600 text-white rounded"
-    //                 >
-    //                     Delete
-    //                 </button>
-    //             </div>
-    //         </div>
-    //     ));
-    // };
-   const handleTransferConfirm = async (newManagerId) => {
+    const handleTransferConfirm = async (newManagerId) => {
   try {
     const token = localStorage.getItem("token");
 
@@ -360,9 +269,6 @@ function Employees() {
     toast.error("Transfer failed");
   }
 };
-
-
-
     const deleteHandler = (user) => {
         if (user.role === "manager") {
             setManagerToTransfer(user);
@@ -446,8 +352,6 @@ function Employees() {
                             <th className="px-4 py-3">S.No</th>
                             <th className="px-4 py-3">Name</th>
                             <th className="px-4 py-3">Is Manager</th>
-
-                            {/* ⏱ FILTER INSIDE COLUMN */}
                             <th className="px-4 py-3 text-center">
                                 <div className="flex flex-col items-center gap-1">
                                     <span>Time Worked</span>

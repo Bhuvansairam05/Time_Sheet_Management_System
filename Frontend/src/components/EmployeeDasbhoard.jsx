@@ -6,7 +6,6 @@ import LogoutConfirmModal from "./LogoutConfirmModal.jsx";
 import Loader from "./Loader.jsx";
 import logo from "../assets/Logo_remove.png";
 import { Clock, Calendar, TrendingUp, Plus, Filter } from "lucide-react";
-
 function EmployeeDashboard() {
   const [showModal, setShowModal] = useState(false);
   const [tasks, setTasks] = useState([]);
@@ -97,7 +96,7 @@ function EmployeeDashboard() {
   const [formData, setFormData] = useState({
     project: "",
     description: "",
-    timeWorked: "", // Changed from startTime/endTime to dropdown
+    timeWorked: "", 
   });
   const fetchFilteredTasks = async (filterType, fromDate = "", toDate = "") => {
     try {
@@ -127,8 +126,6 @@ function EmployeeDashboard() {
 
   const user = location.state?.user;
   const employeeId = user?.id || user?._id;
-
-  // Time worked options (in hours)
   const timeWorkedOptions = [
     { value: "0.5", label: "30 mins" },
     { value: "1", label: "1 hour" },
@@ -147,9 +144,6 @@ function EmployeeDashboard() {
     { value: "7.5", label: "7.5 hours" },
     { value: "8", label: "8 hours" },
   ];
-
-  /* ================= LOGOUT ================= */
-
   const handleLogout = () => {
     setShowLogoutModal(true);
   };
@@ -161,9 +155,6 @@ function EmployeeDashboard() {
     setShowLogoutModal(false);
     navigate("/");
   };
-
-  /* ================= FETCH TIMESHEETS ================= */
-
   const fetchTasks = async () => {
     try {
       const res = await axios.get(
@@ -183,10 +174,6 @@ function EmployeeDashboard() {
       fetchFilteredTasks("Week");
     }
   }, [employeeId, timeFilter]);
-
-
-  /* ================= FETCH PROJECTS ================= */
-
   useEffect(() => {
     const fetchProjects = async () => {
       try {
@@ -204,9 +191,6 @@ function EmployeeDashboard() {
 
     fetchProjects();
   }, []);
-
-  /* ================= CALCULATE STATISTICS ================= */
-
   const calculateStats = () => {
     const totalHours = tasks.reduce((sum, task) => {
       const hours = parseFloat(task.duration) || 0;
@@ -233,9 +217,6 @@ function EmployeeDashboard() {
   };
 
   const stats = calculateStats();
-
-  /* ================= HANDLERS ================= */
-
   const handleChange = (e) => {
     setFormData({
       ...formData,
@@ -260,8 +241,6 @@ function EmployeeDashboard() {
     }
 
     const managerId = selectedProject.manager_id;
-
-    // Calculate start and end time based on timeWorked
     const now = new Date();
     const start_time = new Date(now);
     const hours = parseFloat(timeWorked);
@@ -307,7 +286,6 @@ function EmployeeDashboard() {
       {loading && <Loader />}
 
       <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-50">
-        {/* NAVBAR */}
         <nav className="bg-white shadow-sm border-b border-orange-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
@@ -334,18 +312,13 @@ function EmployeeDashboard() {
             </div>
           </div>
         </nav>
-
-        {/* CONTENT */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Welcome Header */}
           <div className="mb-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-2">
               Welcome back, {user?.name}!
             </h2>
             <p className="text-gray-600">Track your tasks and manage your time effectively</p>
           </div>
-
-          {/* Statistics Cards */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
             <div className="bg-white rounded-xl shadow-sm border border-orange-100 p-6 hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
@@ -388,17 +361,10 @@ function EmployeeDashboard() {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {/* LEFT – TABLE (2/3 width) */}
             <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-orange-100 overflow-hidden">
               <div className="p-6 border-b border-gray-100 flex items-center justify-between">
-
-                {/* LEFT */}
                 <h3 className="text-xl font-bold text-gray-900">Task History</h3>
-
-                {/* RIGHT */}
                 <div className="flex items-center gap-3">
-
-                  {/* Filter */}
                   <div className="relative">
                     <button
                       onClick={() => setShowFilterDropdown(!showFilterDropdown)}
@@ -432,8 +398,6 @@ function EmployeeDashboard() {
                       </div>
                     )}
                   </div>
-
-                  {/* Log Hours */}
                   <button
                     onClick={() => setShowModal(true)}
                     className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-5 py-2 rounded-lg flex items-center gap-2 hover:shadow-lg"
@@ -535,82 +499,8 @@ function EmployeeDashboard() {
               </div>
 
             </div>
-
-            {/* RIGHT – FORM (1/3 width) */}
-            {/* <div className="bg-white rounded-xl shadow-sm border border-orange-100 p-6 h-fit">
-              <div className="flex items-center gap-2 mb-6">
-                <div className="w-10 h-10 bg-orange-100 rounded-lg flex items-center justify-center">
-                  <Plus className="w-5 h-5 text-orange-600" />
-                </div>
-                <h3 className="text-xl font-bold text-gray-900">Add New Task</h3>
-              </div>
-
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Select Project *
-                  </label>
-                  <select
-                    name="project"
-                    value={formData.project}
-                    onChange={handleChange}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition-all"
-                  >
-                    <option value="">Choose a project</option>
-                    {projects.map((p) => (
-                      <option key={p._id} value={p._id}>
-                        {p.project_name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Task Description *
-                  </label>
-                  <textarea
-                    name="description"
-                    value={formData.description}
-                    onChange={handleChange}
-                    rows="3"
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition-all resize-none"
-                    placeholder="What did you work on?"
-                  />
-                </div>
-
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Time Worked *
-                  </label>
-                  <select
-                    name="timeWorked"
-                    value={formData.timeWorked}
-                    onChange={handleChange}
-                    className="w-full border border-gray-300 rounded-lg px-4 py-2.5 text-sm focus:ring-2 focus:ring-orange-400 focus:border-orange-400 transition-all"
-                  >
-                    <option value="">Select duration</option>
-                    {timeWorkedOptions.map((option) => (
-                      <option key={option.value} value={option.value}>
-                        {option.label}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <button
-                  type="submit"
-                  className="w-full bg-gradient-to-r from-orange-500 to-orange-600 text-white py-3 rounded-lg font-semibold hover:shadow-lg hover:shadow-orange-200 transition-all duration-300 flex items-center justify-center gap-2"
-                >
-                  <Plus className="w-5 h-5" />
-                  Add Task
-                </button>
-              </form>
-            </div> */}
           </div>
         </main>
-
-        {/* LOGOUT MODAL */}
         <LogoutConfirmModal
           isOpen={showLogoutModal}
           onClose={() => setShowLogoutModal(false)}
@@ -625,8 +515,6 @@ function EmployeeDashboard() {
 
             {taskRows.map((row, index) => (
               <div key={index} className="grid grid-cols-5 gap-3 mb-4">
-
-                {/* project */}
                 <select
                   value={row.project}
                   onChange={(e) => handleRowChange(index, "project", e.target.value)}
@@ -637,16 +525,12 @@ function EmployeeDashboard() {
                     <option key={p._id} value={p._id}>{p.project_name}</option>
                   ))}
                 </select>
-
-                {/* desc */}
                 <input
                   placeholder="Description"
                   value={row.description}
                   onChange={(e) => handleRowChange(index, "description", e.target.value)}
                   className="border p-2 rounded"
                 />
-
-                {/* time */}
                 <select
                   value={row.timeWorked}
                   onChange={(e) => handleRowChange(index, "timeWorked", e.target.value)}
@@ -657,8 +541,6 @@ function EmployeeDashboard() {
                     <option key={o.value} value={o.value}>{o.label}</option>
                   ))}
                 </select>
-
-                {/* date */}
                 <input
                   type="date"
                   value={row.date}
@@ -674,8 +556,6 @@ function EmployeeDashboard() {
 
               </div>
             ))}
-
-            {/* actions */}
             <div className="flex justify-between mt-4">
               <button
                 onClick={addRow}
@@ -700,13 +580,10 @@ function EmployeeDashboard() {
                 </button>
               </div>
             </div>
-
           </div>
         </div>
       )}
-
     </>
   );
 }
-
 export default EmployeeDashboard;

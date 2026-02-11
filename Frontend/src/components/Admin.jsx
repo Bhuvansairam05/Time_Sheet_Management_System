@@ -17,17 +17,14 @@ function Admin() {
   const [adminUser,setadminUser] = useState([]);
   useEffect(() => {
   const token = localStorage.getItem("token");
-
   if (token) {
     const payload = JSON.parse(atob(token.split(".")[1]));
-
     setadminUser({
       name: payload.name,
       userId: payload.userId
     });
   }
 }, []);
-
   const handleLogout = () => {
     setShowLogoutModal(true);
   };
@@ -41,11 +38,9 @@ function Admin() {
     <>
     {loading && <Loader />}
     <div className="min-h-screen bg-gray-50">
-      {/* Top Navigation Bar */}
       <nav className="bg-white shadow-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
-            {/* Logo */}
             <div className="flex items-center gap-2">
               <img
                 src={logo}
@@ -59,8 +54,6 @@ function Admin() {
                 Admin
               </span>
             </div>
-
-            {/* Navigation Links */}
             <div className="hidden md:flex items-center space-x-8">
               <button
                 onClick={() => setActiveTab('dashboard')}
@@ -99,8 +92,6 @@ function Admin() {
                 My Tasks
               </button>
             </div>
-
-            {/* Logout Button */}
             <button
               onClick={handleLogout}
               className="flex items-center gap-2 bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition font-medium"
@@ -112,7 +103,6 @@ function Admin() {
             </button>
           </div>
         </div>
-
         {/* Mobile Navigation */}
         <div className="md:hidden border-t border-gray-200">
           <div className="flex justify-around py-2">
@@ -147,8 +137,6 @@ function Admin() {
           </div>
         </div>
       </nav>
-
-      {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {activeTab === 'dashboard' && (
           <AdminDashboard/>
@@ -173,7 +161,5 @@ function Admin() {
     </div>
         </>
   );
-
-
 }
 export default Admin;

@@ -16,19 +16,25 @@ import {
 import { useEffect, useState } from "react";
 import Loader from "./Loader.jsx";
 import toast from "react-hot-toast";
-
 function AdminDashboard() {
   const [loading, setLoading] = useState(false);
   const [stats, setStats] = useState([]);
   const [projectTimeData, setProjectTimeData] = useState([]);
   const [weeklyTrendData, setWeeklyTrendData] = useState([]);
-
   const COLORS = ["#FF6B00", "#FF8C3A", "#FFB366", "#FFC999", "#FFDAB3"];
-
   useEffect(() => {
     fetchDashboardData();
   }, []);
-
+const normalizeWeekData = (data = []) => {
+  const week = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  return week.map((d) => {
+    const found = data.find((item) => item.day === d);
+    return {
+      day: d,
+      hours: found ? found.hours : 0,
+    };
+  });
+};
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
@@ -57,7 +63,8 @@ function AdminDashboard() {
       ]);
 
       setProjectTimeData(data.projectTimeData || []);
-      setWeeklyTrendData(data.weeklyTrendData || []);
+      setWeeklyTrendData(normalizeWeekData(data.weeklyTrendData));
+
     } catch (error) {
       toast.error(error.message || "Something went wrong");
     } finally {
@@ -70,15 +77,12 @@ function AdminDashboard() {
       {loading && <Loader />}
 
       <div className="space-y-6">
-        {/* Header */}
         <div>
           <h2 className="text-3xl font-bold text-gray-800">Dashboard</h2>
           <p className="text-gray-600 mt-1">
             Welcome back! Here's what's happening with your projects.
           </p>
         </div>
-
-        {/* Stats */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {stats.map((stat, index) => (
             <div
@@ -99,15 +103,11 @@ function AdminDashboard() {
             </div>
           ))}
         </div>
-
-        {/* Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Bar Chart */}
           <div className="bg-white rounded-lg shadow-md p-6">
             <h3 className="text-xl font-bold mb-4">
               Time Spent per Project
             </h3>
-
             {projectTimeData.length > 0 ? (
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={projectTimeData}>
@@ -130,8 +130,6 @@ function AdminDashboard() {
               </p>
             )}
           </div>
-
-          {/* Pie Chart */}
           <div className="bg-white rounded-lg shadow-md p-6">
             <h3 className="text-xl font-bold mb-4">
               Project Time Distribution
@@ -166,8 +164,6 @@ function AdminDashboard() {
             )}
           </div>
         </div>
-
-        {/* Line Chart */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <h3 className="text-xl font-bold mb-4">
             Weekly Time Trend
@@ -199,5 +195,4 @@ function AdminDashboard() {
     </>
   );
 }
-
 export default AdminDashboard;

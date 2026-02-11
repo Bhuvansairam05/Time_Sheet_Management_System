@@ -64,8 +64,6 @@ function LoginModal({ isOpen, onClose }) {
           localStorage.setItem("token", result.token);
           localStorage.setItem("role", role);
           if (role === "admin") {
-            // console.log(result);
-            // const employee = await fetch("http://localhost:5000/api/auth/getEmployees");
             navigate("/admin/dashboard", {
               state: {
                 user: result.user
@@ -93,7 +91,6 @@ function LoginModal({ isOpen, onClose }) {
       }
 
     }
-    // Add your authentication logic here
 
   };
   const togglePasswordVisibility = () => {
@@ -102,8 +99,6 @@ function LoginModal({ isOpen, onClose }) {
 
 
   const handleGoogleSignin = () => {
-    /* global google */
-    // opens popup
   };
   const handleGoogleResponse = async (response) => {
     try {
@@ -162,9 +157,7 @@ function LoginModal({ isOpen, onClose }) {
       {loading && <Loader />}
 
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
-        {/* Modal Container */}
         <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh]  flex">
-          {/* Left Side - Image Section */}
           <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-orange-600 to-orange-500 items-center justify-center p-8">
             <div className="text-center text-white">
               <div className="mb-6">
@@ -207,10 +200,7 @@ function LoginModal({ isOpen, onClose }) {
               </div>
             </div>
           </div>
-
-          {/* Right Side - Login Form */}
           <div className="w-full lg:w-1/2 relative overflow-y-hidden p-8">
-            {/* Close Button - Top Right */}
             <button
               onClick={onClose}
               className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition"
@@ -221,13 +211,10 @@ function LoginModal({ isOpen, onClose }) {
             </button>
 
             <div className="max-w-md mx-auto">
-              {/* Logo for Mobile */}
               <div className="lg:hidden text-center mb-6">
                 <h1 className="text-2xl font-bold text-orange-600 mb-1">TimeTrack Pro</h1>
                 <p className="text-gray-600 text-sm">Welcome back!</p>
               </div>
-
-              {/* Login Form */}
               <div className='overflow-y-hidden'>
                 <div className="mb-2">
                   <h2 className="text-2xl font-bold text-gray-800 mb-1">Login</h2>
@@ -242,7 +229,6 @@ function LoginModal({ isOpen, onClose }) {
                 </div>
 
                 <div className="space-y-3">
-                  {/* email Field */}
                   <div>
                     <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-1">
                       Email
@@ -268,8 +254,6 @@ function LoginModal({ isOpen, onClose }) {
                       </p>
                     )}
                   </div>
-
-                  {/* Password Field */}
                   <div>
                     <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-1">
                       Password
@@ -313,8 +297,6 @@ function LoginModal({ isOpen, onClose }) {
                       </p>
                     )}
                   </div>
-
-                  {/* Remember Me & Forgot Password */}
                   <div className="flex items-center justify-between">
                     <label className="flex items-center cursor-pointer">
                       <input
@@ -329,8 +311,6 @@ function LoginModal({ isOpen, onClose }) {
                       Forgot Password?
                     </button>
                   </div>
-
-                  {/* Login Button */}
                   <button
                     onClick={handleSubmit}
                     className="w-full bg-orange-600 text-white py-2.5 rounded-lg font-semibold hover:bg-orange-700 transition duration-200 shadow-lg hover:shadow-xl"
@@ -338,15 +318,11 @@ function LoginModal({ isOpen, onClose }) {
                     Login
                   </button>
                 </div>
-
-                {/* Divider */}
                 <div className="mt-4 mb-4 flex items-center">
                   <div className="flex-1 border-t border-gray-300"></div>
                   <span className="px-4 text-xs text-gray-500">OR</span>
                   <div className="flex-1 border-t border-gray-300"></div>
                 </div>
-
-                {/* Google Signin */}
                 <div className="flex justify-center">
                   <GoogleLogin
                     onSuccess={handleGoogleResponse}

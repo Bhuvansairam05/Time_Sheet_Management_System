@@ -32,12 +32,9 @@ function Manager() {
       {loading && <Loader />}
 
       <div className="min-h-screen bg-gray-50">
-        {/* Top Navigation Bar */}
         <nav className="bg-white shadow-md">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
-              
-              {/* Logo */}
               <div className="flex items-center gap-2">
                 <img
                   src={logo}
@@ -51,8 +48,6 @@ function Manager() {
                   Manager
                 </span>
               </div>
-
-              {/* Navigation Links */}
               <div className="hidden md:flex items-center space-x-8">
                 <button
                   onClick={() => setActiveTab("dashboard")}
@@ -76,8 +71,6 @@ function Manager() {
                   My Tasks
                 </button>
               </div>
-
-              {/* Logout Button */}
               <button
                 onClick={handleLogout}
                 className="flex items-center gap-2 bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition font-medium"
@@ -100,8 +93,6 @@ function Manager() {
               </button>
             </div>
           </div>
-
-          {/* Mobile Navigation */}
           <div className="md:hidden border-t border-gray-200">
             <div className="flex justify-around py-2">
               <button
@@ -128,14 +119,10 @@ function Manager() {
             </div>
           </div>
         </nav>
-
-        {/* Main Content */}
         <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {activeTab === "dashboard" && <ManagerDashboard user={user}/>}
           {activeTab === "tasks" && <MyTasks user={user}/>}
         </main>
-
-        {/* Logout Modal */}
         <LogoutConfirmModal
           isOpen={showLogoutModal}
           onClose={() => setShowLogoutModal(false)}
@@ -145,5 +132,4 @@ function Manager() {
     </>
   );
 }
-
 export default Manager;

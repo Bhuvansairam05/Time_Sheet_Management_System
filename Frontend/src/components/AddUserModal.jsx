@@ -1,6 +1,4 @@
 import { useState, useEffect } from "react";
-
-/* 🔹 reusable initial state */
 const initialFormData = {
   name: "",
   email: "",
@@ -11,8 +9,6 @@ const initialFormData = {
 
 function AddUserModal({ isOpen, onClose, onSubmit, managers }) {
   const [formData, setFormData] = useState(initialFormData);
-
-  /* 🔹 reset form whenever modal closes */
   useEffect(() => {
     if (!isOpen) {
       setFormData(initialFormData);
@@ -22,7 +18,6 @@ function AddUserModal({ isOpen, onClose, onSubmit, managers }) {
   if (!isOpen) {
     return null;
   }
-
   const handleChange = (e) => {
   const { name, value } = e.target;
 
@@ -31,30 +26,21 @@ function AddUserModal({ isOpen, onClose, onSubmit, managers }) {
     [name]: value,
   }));
 };
-
-
   const handleSubmit = (e) => {
     e.preventDefault();
-
-
 const payload = {
   ...formData,
   reporting_to: formData.reporting_to || null,
 };
-
-
-
     onSubmit(payload);
 
-    setFormData(initialFormData); // ✅ reset after submit
-    onClose();                    // ✅ close modal
+    setFormData(initialFormData); 
+    onClose();                   
   };
-
   const handleClose = () => {
-    setFormData(initialFormData); // ✅ reset on cancel / X
+    setFormData(initialFormData); 
     onClose();
   };
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
       <div className="bg-white w-full max-w-lg rounded-xl shadow-xl p-6">
@@ -154,5 +140,4 @@ const payload = {
     </div>
   );
 }
-
 export default AddUserModal;

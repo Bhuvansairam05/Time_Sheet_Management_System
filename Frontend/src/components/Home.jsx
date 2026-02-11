@@ -5,8 +5,8 @@ import axios from "axios";
 function Home() {
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [stats, setStats] = useState({
-    totalProjects: 500,   // default
-    activeUsers: 2000,    // default
+    totalProjects: 500,   
+    activeUsers: 2000,    
   });
   const openLoginModal = () => setIsLoginModalOpen(true);
   const closeLoginModal = () => setIsLoginModalOpen(false);
@@ -30,20 +30,9 @@ function Home() {
   return (
     <div className="min-h-screen bg-white overflow-x-hidden">
       <div className="min-h-screen bg-white overflow-x-hidden">
-        {/* Header */}
         <header className="fixed top-0 left-0 w-full bg-white shadow-md z-50 overflow-hidden">
-          {/* <nav className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
-          <div className="text-xl sm:text-2xl md:text-3xl font-bold text-orange-600 whitespace-nowrap">TimeTrack Pro</div>
-          <ul className="flex gap-2 sm:gap-4 md:gap-8 items-center text-xs sm:text-sm md:text-base">
-            <li className="hidden sm:block"><a href="#features" className="text-gray-700 hover:text-orange-600 transition whitespace-nowrap">Features</a></li>
-            <li className="hidden md:block"><a href="#about" className="text-gray-700 hover:text-orange-600 transition whitespace-nowrap">About</a></li>
-            <li className="hidden md:block"><a href="#contact" className="text-gray-700 hover:text-orange-600 transition whitespace-nowrap">Contact</a></li>
-            <li><button onClick={openLoginModal} className="bg-orange-600 text-white px-3 sm:px-4 md:px-6 py-2 rounded-lg hover:bg-orange-700 transition whitespace-nowrap">Login</button></li>
-          </ul>
-        </nav> */}
+         
           <nav className="max-w-7xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
-
-            {/* Logo + Brand */}
             <div className="flex items-center gap-2 whitespace-nowrap">
               <img
                 src={logo}
@@ -54,8 +43,6 @@ function Home() {
                 TimeTrack Pro
               </span>
             </div>
-
-            {/* Nav Links */}
             <ul className="flex gap-2 sm:gap-4 md:gap-8 items-center text-xs sm:text-sm md:text-base">
               <li className="hidden sm:block">
                 <a href="#features" className="text-gray-700 hover:text-orange-600 transition whitespace-nowrap">
@@ -84,8 +71,6 @@ function Home() {
           </nav>
 
         </header>
-
-        {/* Hero Section */}
         <section className="pt-20 sm:pt-24 md:pt-32 pb-12 sm:pb-16 md:pb-20 px-4 sm:px-6 bg-gradient-to-br from-orange-600 to-orange-500 text-white overflow-hidden">
           <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-8 md:gap-12 items-center">
             <div>
@@ -113,15 +98,12 @@ function Home() {
             </div>
           </div>
         </section>
-
-        {/* Features Section */}
         <section id="features" className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 bg-white">
           <div className="max-w-7xl mx-auto">
             <h2 className="text-3xl sm:text-4xl font-bold text-center mb-3 sm:mb-4 text-gray-800">Powerful Features</h2>
             <p className="text-center text-gray-600 mb-10 sm:mb-16 text-base sm:text-lg">Everything you need to manage time sheets effectively</p>
 
             <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-              {/* Employee Features */}
               <div className=" bg-orange-50 p-6 sm:p-8 rounded-lg border-2 border-orange-200 hover:border-orange-600 transition">
                 <div className="w-14 h-14 sm:w-16 sm:h-16 bg-orange-600 rounded-full flex items-center justify-center mb-4 sm:mb-6 mx-auto">
                   <span className="text-2xl sm:text-3xl text-white">👤</span>
@@ -148,8 +130,6 @@ function Home() {
                   </ul>
                 </div>
               </div>
-
-              {/* Manager Features */}
               <div className="bg-orange-50 p-6 sm:p-8 rounded-lg border-2 border-orange-200 hover:border-orange-600 transition">
                 <div className="w-14 h-14 sm:w-16 sm:h-16 bg-orange-600 rounded-full flex items-center justify-center mb-4 sm:mb-6 mx-auto">
                   <span className="text-2xl sm:text-3xl text-white">👨‍💼</span>
@@ -176,8 +156,6 @@ function Home() {
                   </ul>
                 </div>
               </div>
-
-              {/* Admin Features */}
               <div className="bg-orange-50 p-6 sm:p-8 rounded-lg border-2 border-orange-200 hover:border-orange-600 transition sm:col-span-2 lg:col-span-1">
                 <div className="w-14 h-14 sm:w-16 sm:h-16 bg-orange-600 rounded-full flex items-center justify-center mb-4 sm:mb-6 mx-auto">
                   <span className="text-2xl sm:text-3xl text-white">⚙️</span>
@@ -207,8 +185,6 @@ function Home() {
             </div>
           </div>
         </section>
-
-        {/* How It Works */}
         <section id="about" className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 bg-gradient-to-br from-orange-500 to-orange-600 text-white">
           <div className="max-w-7xl mx-auto">
             <h2 className="text-3xl sm:text-4xl font-bold text-center mb-10 sm:mb-16">How It Works</h2>
@@ -240,8 +216,6 @@ function Home() {
             </div>
           </div>
         </section>
-
-        {/* CTA Section */}
         <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 bg-white">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4 sm:mb-6 text-gray-800">Ready to Transform Your Time Management?</h2>
@@ -249,8 +223,6 @@ function Home() {
             <button onClick={openLoginModal} className="inline-block bg-orange-600 text-white px-8 sm:px-10 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:bg-orange-700 transition">Get Started Now</button>
           </div>
         </section>
-
-        {/* Footer */}
         <footer id="contact" className="bg-gray-900 text-white py-8 sm:py-12 px-4 sm:px-6">
           <div className="max-w-7xl mx-auto text-center">
             <div className="text-2xl sm:text-3xl font-bold text-orange-600 mb-3 sm:mb-4">TimeTrack Pro</div>
@@ -264,10 +236,6 @@ function Home() {
             <p className="text-gray-500 text-xs sm:text-sm">© 2026 TimeTrack Pro. All rights reserved.</p>
           </div>
         </footer>
-
-        {/* Login Modal - Import this separately */}
-        {/* <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal} /> */}
-        {/* Placeholder for modal - You'll import the LoginModal component */}
       </div>
       <LoginModal isOpen={isLoginModalOpen} onClose={closeLoginModal} />
     </div>
