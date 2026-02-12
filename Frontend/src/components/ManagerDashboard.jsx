@@ -430,7 +430,6 @@ function ManagerDashboard({ user }) {
                         {formatTime(emp.totalTime)}
                       </td>
                     </tr>
-
                     {projectExpandedRows[emp._id] && (
                       <tr className="bg-gray-50">
                         <td colSpan="3" className="px-8 py-4">

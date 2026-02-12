@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const Project = require("../models/Project");
+const Timesheet = require("../models/Timesheet");
 const bcrypt = require("bcryptjs");
 const addUser = async (req, res) => {
   try {
@@ -118,15 +119,14 @@ const transferRespons = async (req, res) => {
       { reporting_to: oldManagerId },
       { $set: { reporting_to: newManagerId } }
     );
-
+    await Timesheet.updateMany(
+      { manager_id: oldManagerId },   // find old manager records
+      { $set: { manager_id: newManagerId } }  // assign new manager
+    );
     /* ======================================
        3️⃣ TRANSFER TIMESHEETS
     ====================================== */
-    await Timesheet.updateMany(
-      { manager_id: oldManagerId },
-      { $set: { manager_id: newManagerId } }
-    );
-
+ 
     return res.status(200).json({
       success: true,
       message: "Responsibilities transferred successfully",
@@ -232,7 +232,7 @@ const addProject = async (req, res) => {
     }
 
     // (optional but recommended)
-    if (!manager.role==="manager") {
+    if (!manager.role === "manager") {
       return res.status(400).json({
         message: "Selected user is not a manager",
       });
@@ -319,4 +319,4 @@ const endProject = async (req, res) => {
 };
 const deleteProject = async (req, res) => { }
 const updateProject = async (req, res) => { }
-module.exports = { addUser,transferRespons, updateUser, removeUser, getProjects, addProject, deleteProject, updateProject, endProject };
+module.exports = { addUser, transferRespons, updateUser, removeUser, getProjects, addProject, deleteProject, updateProject, endProject };
