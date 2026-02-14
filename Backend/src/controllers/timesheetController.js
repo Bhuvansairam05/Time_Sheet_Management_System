@@ -722,7 +722,8 @@ const getFilteredTimesheet = async (req, res) => {
       {
         $match: {
           employee_id: empId,
-          createdAt: { $gte: fromDate, $lte: toDate } // 🔥 important
+          start_time: { $gte: fromDate, $lte: toDate }
+ // 🔥 important
         }
       },
 

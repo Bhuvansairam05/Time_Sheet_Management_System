@@ -338,7 +338,7 @@ function EmployeeDashboard() {
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Total Hours</p>
                   <p className="text-3xl font-bold text-orange-600">{stats.totalHours}</p>
-                  <p className="text-xs text-gray-500 mt-1">this {timeFilter}</p>
+                  <p className="text-xs text-gray-500 mt-1">This {timeFilter}</p>
                 </div>
                 <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
                   <Calendar className="w-6 h-6 text-orange-600" />

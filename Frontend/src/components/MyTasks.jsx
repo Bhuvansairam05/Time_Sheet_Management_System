@@ -86,7 +86,7 @@ function MyTasks() {
           date: row.date
         });
       }
-
+      console.log(payload);
       const res = await axios.post(
         "http://localhost:5000/api/timesheet/addTimesheet",
         { tasks: payload }
@@ -448,7 +448,7 @@ const StatCard = ({ title, value, icon,timeFilter }) => (
         {icon}
       </div>
     </div>
-    <p className="text-left text-sm text-gray-600 mb-1">{(title!=="Today's Hours")?"this "+timeFilter:""}</p>
+    <p className="text-left text-sm text-gray-600 mb-1">{(title!=="Today's Hours")?"This "+timeFilter:""}</p>
   </div>
 );
 
