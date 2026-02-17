@@ -67,7 +67,7 @@ function EmployeeDashboard() {
       }
 
       const res = await axios.post(
-        "http://localhost:5000/api/timesheet/addTimesheet",
+        "https://repressedly-hyperopic-rosario.ngrok-free.dev/api/timesheet/addTimesheet",
         { tasks: payload }
       );
 
@@ -102,7 +102,7 @@ function EmployeeDashboard() {
     try {
       setLoading(true);
 
-      let url = `http://localhost:5000/api/timesheet/filteredTimesheet?type=${timeFilter.toLowerCase()}&employeeId=${employeeId}`;
+      let url = `https://repressedly-hyperopic-rosario.ngrok-free.dev/api/timesheet/filteredTimesheet?type=${timeFilter.toLowerCase()}&employeeId=${employeeId}`;
 
       if (filterType === "Custom") {
         url += `&from=${fromDate}&to=${toDate}`;
@@ -158,7 +158,7 @@ function EmployeeDashboard() {
   const fetchTasks = async () => {
     try {
       const res = await axios.get(
-        `http://localhost:5000/api/timesheet/employeeTimesheet/${employeeId}`
+        `https://repressedly-hyperopic-rosario.ngrok-free.dev/api/timesheet/employeeTimesheet/${employeeId}`
       );
 
       if (res.data.success) {
@@ -178,7 +178,7 @@ function EmployeeDashboard() {
     const fetchProjects = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:5000/api/timesheet/projectsList"
+          "https://repressedly-hyperopic-rosario.ngrok-free.dev/api/timesheet/projectsList"
         );
 
         if (res.data.success) {
@@ -259,7 +259,7 @@ function EmployeeDashboard() {
       };
 
       const res = await axios.post(
-        "http://localhost:5000/api/timesheet/addTimesheet",
+        "https://repressedly-hyperopic-rosario.ngrok-free.dev/api/timesheet/addTimesheet",
         body
       );
 

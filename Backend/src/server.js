@@ -6,19 +6,25 @@ const path = require("path");
 const app = express();
 
 app.use(
-  cors({
-    origin: "http://localhost:5173",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  })
+  cors()
 );
 app.use(express.json());
 const authRoutes = require("./routes/auth");
 const adminRoutes = require("./routes/admin");
 const timesheetRoutes = require("./routes/timesheetroute");
+
 app.use("/api/auth",authRoutes);
 app.use("/api/admin",adminRoutes);
 app.use("/api/timesheet",timesheetRoutes);
+// Serve frontend build
+const frontendPath = path.join(__dirname, "../../Frontend/dist");
+
+app.use(express.static(frontendPath));
+
+app.get("/:path(*)", (req, res) => {
+  res.sendFile(path.join(__dirname, "../../Frontend/dist/index.html"));
+});
+
 console.log(process.env.mongoDB_URI);
 mongoose.connect(process.env.mongoDB_URI)
   .then(() => {

@@ -37,7 +37,7 @@ function ManagerDashboard({ user }) {
         const token = localStorage.getItem("token");
 
         const res = await fetch(
-          "http://localhost:5000/api/timesheet/manager/projects",
+          "https://repressedly-hyperopic-rosario.ngrok-free.dev/api/timesheet/manager/projects",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -85,7 +85,7 @@ function ManagerDashboard({ user }) {
     try {
       const token = localStorage.getItem("token");
 
-      let url = `http://localhost:5000/api/timesheet/manager/project/${selectedProject}?filter=${projectFilter}`;
+      let url = `https://repressedly-hyperopic-rosario.ngrok-free.dev/api/timesheet/manager/project/${selectedProject}?filter=${projectFilter}`;
 
       if (projectFilter === "custom" && projectFromDate && projectToDate) {
         url += `&from=${projectFromDate}&to=${projectToDate}`;
@@ -110,7 +110,7 @@ function ManagerDashboard({ user }) {
     try {
       const token = localStorage.getItem("token");
 
-      let url = `http://localhost:5000/api/timesheet/manager/employee/${employeeId}?filter=${projectFilter}`;
+      let url = `https://repressedly-hyperopic-rosario.ngrok-free.dev/api/timesheet/manager/employee/${employeeId}?filter=${projectFilter}`;
 
       if (projectFilter === "custom" && projectFromDate && projectToDate) {
         url += `&from=${projectFromDate}&to=${projectToDate}`;
@@ -138,7 +138,7 @@ function ManagerDashboard({ user }) {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
-      let url = `http://localhost:5000/api/timesheet/manager/summary?filter=${filter}`;
+      let url = `https://repressedly-hyperopic-rosario.ngrok-free.dev/api/timesheet/manager/summary?filter=${filter}`;
       if (filter === "custom" && fromDate && toDate) {
         url += `&from=${fromDate}&to=${toDate}`;
       }
@@ -186,7 +186,7 @@ function ManagerDashboard({ user }) {
     if (detailsData[employeeId]?.filter === filter) return;
     try {
       const token = localStorage.getItem("token");
-      let url = `http://localhost:5000/api/timesheet/manager/employee/${employeeId}?filter=${filter}`;
+      let url = `https://repressedly-hyperopic-rosario.ngrok-free.dev/api/timesheet/manager/employee/${employeeId}?filter=${filter}`;
       if (filter === "custom" && fromDate && toDate) {
         url += `&from=${fromDate}&to=${toDate}`;
       }

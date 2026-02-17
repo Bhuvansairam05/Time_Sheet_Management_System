@@ -42,7 +42,7 @@ const normalizeWeekData = (data = []) => {
       const token = localStorage.getItem("token");
 
       const response = await fetch(
-        "http://localhost:5000/api/timesheet/dashboard",
+        "https://repressedly-hyperopic-rosario.ngrok-free.dev/api/timesheet/dashboard",
         {
           headers: {
             Authorization: `Bearer ${token}`,
