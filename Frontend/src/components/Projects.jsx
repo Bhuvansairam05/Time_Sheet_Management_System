@@ -7,13 +7,18 @@ function Projects() {
   const [managers, setManagers] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showAddProjectModal, setShowAddProjectModal] = useState(false);
+  const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [selectedProject, setSelectedProject] = useState(null);
+  const [updatedProjectName, setUpdatedProjectName] = useState("");
+  const [updatedManager, setUpdatedManager] = useState("");
+
   const fetchProjects = async () => {
     try {
       setLoading(true);
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        "https://repressedly-hyperopic-rosario.ngrok-free.dev/api/admin/getProjects",
+        "http://localhost:5000/api/admin/getProjects",
         {
           method: "GET",
           headers: {
@@ -41,7 +46,7 @@ function Projects() {
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        "https://repressedly-hyperopic-rosario.ngrok-free.dev/api/auth/getEmployees",
+        "http://localhost:5000/api/auth/getEmployees",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -51,7 +56,7 @@ function Projects() {
 
       if (result.success) {
         const availableManagers = result.data.filter(
-          (u) => u.role==="manager"
+          (u) => u.role === "manager"
         );
         setManagers(availableManagers);
       }
@@ -64,53 +69,121 @@ function Projects() {
     fetchProjects();
     fetchManagers();
   }, []);
- const handleAddProject = async (projectData) => {
-  try {
-    setLoading(true);
-    const token = localStorage.getItem("token");
+  const handleAddProject = async (projectData) => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
 
-    const res = await fetch(
-      "https://repressedly-hyperopic-rosario.ngrok-free.dev/api/admin/addProject",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(projectData),
+      const res = await fetch(
+        "http://localhost:5000/api/admin/addProject",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(projectData),
+        }
+      );
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        toast.error(result.message || "Failed to add project");
+        return;
       }
-    );
+      fetchProjects();
+      toast.success("Project created successfully");
+      setShowAddProjectModal(false);
+      fetchProjects();
+      fetchManagers();
 
-    const result = await res.json();
-
-    if (!res.ok) {
-      toast.error(result.message || "Failed to add project");
-      return;
+    } catch (error) {
+      console.error("Add Project Error:", error);
+      toast.error("Server error while adding project");
+    } finally {
+      setLoading(false);
     }
-    fetchProjects();
-    toast.success("Project created successfully");
-    setShowAddProjectModal(false);
-    fetchProjects();
-    fetchManagers();
-
-  } catch (error) {
-    console.error("Add Project Error:", error);
-    toast.error("Server error while adding project");
-  } finally {
-    setLoading(false);
-  }
-};
+  };
 
 
 
   const handleEdit = (projectId) => {
-    console.log("Edit project:", projectId);
+    const project = projects.find(p => p.project_id === projectId);
+
+    if (!project) return;
+
+    setSelectedProject(project);
+    setUpdatedProjectName(project.project_name);
+    setUpdatedManager(project.manager_id || "");
+    setShowUpdateModal(true);
   };
 
   const handleDelete = async (projectId, projectName) => {
     console.log("Delete project:", projectId, projectName);
   };
+const handleUpdateProject = async () => {
+  if (!updatedProjectName || !updatedManager) {
+    toast.error("Please fill all fields");
+    return;
+  }
 
+  toast((t) => (
+    <div>
+      <p className="font-semibold mb-2">Are you sure to update?</p>
+      <div className="flex gap-2 justify-end">
+        <button
+          onClick={() => toast.dismiss(t.id)}
+          className="px-3 py-1 bg-gray-300 rounded"
+        >
+          Cancel
+        </button>
+        <button
+          onClick={async () => {
+            toast.dismiss(t.id);
+
+            try {
+              const token = localStorage.getItem("token");
+
+              const res = await fetch(
+                `http://localhost:5000/api/admin/updateProject/${selectedProject.project_id}`,
+                {
+                  method: "PUT",
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                  },
+                  body: JSON.stringify({
+                    project_name: updatedProjectName,
+                    manager_id: updatedManager,
+                  }),
+                }
+              );
+
+              const result = await res.json();
+
+              if (!res.ok) {
+                toast.error(result.message || "Update failed");
+                return;
+              }
+
+              toast.success("Project updated successfully");
+              setShowUpdateModal(false);
+              fetchProjects();
+              fetchManagers();
+
+            } catch (error) {
+              toast.error("Server error while updating");
+            }
+          }}
+          className="px-3 py-1 bg-blue-600 text-white rounded"
+        >
+          Yes
+        </button>
+      </div>
+    </div>
+  ));
+};
   return (
     <div className="bg-white rounded-lg shadow-md p-6">
       <div className="flex justify-between items-center mb-6">
@@ -118,7 +191,7 @@ function Projects() {
 
         <button
           onClick={() => setShowAddProjectModal(true)}
-          className="bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition font-medium"
+          className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-medium"
         >
           + Add Project
         </button>
@@ -194,6 +267,77 @@ function Projects() {
         onSubmit={handleAddProject}
         managers={managers}
       />
+      {showUpdateModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
+          <div className="bg-white rounded-lg shadow-lg w-full max-w-md p-6">
+
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-bold text-gray-800">
+                Update Project
+              </h2>
+              <button
+                onClick={() => setShowUpdateModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                ✕
+              </button>
+            </div>
+
+            <div className="space-y-4">
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Project Name
+                </label>
+                <input
+                  type="text"
+                  value={updatedProjectName}
+                  onChange={(e) => setUpdatedProjectName(e.target.value)}
+                  className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-1">
+                  Assign Manager
+                </label>
+                <select
+                  value={updatedManager}
+                  onChange={(e) => setUpdatedManager(e.target.value)}
+                  className="w-full border rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                >
+                  <option value="">Select Manager</option>
+
+                  {managers.map((manager) => (
+                    <option key={manager._id} value={manager._id}>
+                      {manager.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+            </div>
+
+            <div className="flex justify-end gap-3 mt-6">
+              <button
+                onClick={() => setShowUpdateModal(false)}
+                className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={handleUpdateProject}
+                className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
+              >
+                Update Project
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
     </div>
   );
 }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import LogoutConfirmModal from "./LogoutConfirmModal.jsx";
-import logo from "../assets/Logo_remove.png";
+import logo from "../assets/Gradious_ai_logo.png";
 import { useNavigate } from "react-router-dom";
 import Loader from "./Loader.jsx";
 import toast from "react-hot-toast";
@@ -41,7 +41,7 @@ function Manager() {
                   alt="TimeTrack Pro Logo"
                   className="h-7 w-auto object-contain"
                 />
-                <h1 className="text-2xl font-bold text-orange-600">
+                <h1 className="text-2xl font-bold text-blue-600">
                   TimeTrack Pro
                 </h1>
                 <span className="ml-2 px-3 py-1 bg-blue-100 text-blue-600 text-xs font-semibold rounded-full">
@@ -53,8 +53,8 @@ function Manager() {
                   onClick={() => setActiveTab("dashboard")}
                   className={`px-3 py-2 rounded-md text-sm font-medium transition ${
                     activeTab === "dashboard"
-                      ? "text-orange-600 bg-orange-50"
-                      : "text-gray-700 hover:text-orange-600 hover:bg-gray-50"
+                      ? "text-blue-600 bg-blue-50"
+                      : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
                   }`}
                 >
                   Dashboard
@@ -64,8 +64,8 @@ function Manager() {
                   onClick={() => setActiveTab("tasks")}
                   className={`px-3 py-2 rounded-md text-sm font-medium transition ${
                     activeTab === "tasks"
-                      ? "text-orange-600 bg-orange-50"
-                      : "text-gray-700 hover:text-orange-600 hover:bg-gray-50"
+                      ? "text-blue-600 bg-blue-50"
+                      : "text-gray-700 hover:text-blue-600 hover:bg-gray-50"
                   }`}
                 >
                   My Tasks
@@ -73,7 +73,7 @@ function Manager() {
               </div>
               <button
                 onClick={handleLogout}
-                className="flex items-center gap-2 bg-orange-600 text-white px-4 py-2 rounded-lg hover:bg-orange-700 transition font-medium"
+                className="flex items-center gap-2 bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition font-medium"
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
@@ -99,7 +99,7 @@ function Manager() {
                 onClick={() => setActiveTab("dashboard")}
                 className={`px-3 py-2 text-sm font-medium ${
                   activeTab === "dashboard"
-                    ? "text-orange-600"
+                    ? "text-blue-600"
                     : "text-gray-700"
                 }`}
               >
@@ -110,7 +110,7 @@ function Manager() {
                 onClick={() => setActiveTab("tasks")}
                 className={`px-3 py-2 text-sm font-medium ${
                   activeTab === "tasks"
-                    ? "text-orange-600"
+                    ? "text-blue-600"
                     : "text-gray-700"
                 }`}
               >

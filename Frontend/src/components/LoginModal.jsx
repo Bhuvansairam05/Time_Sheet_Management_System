@@ -39,7 +39,7 @@ function LoginModal({ isOpen, onClose }) {
     if (validateForm()) {
       try {
         setLoading(true);
-        const response = await fetch("https://repressedly-hyperopic-rosario.ngrok-free.dev/api/auth/login", {
+        const response = await fetch("http://localhost:5000/api/auth/login", {
           method: "POST",
           headers: {
             "content-type": "application/json"
@@ -52,12 +52,12 @@ function LoginModal({ isOpen, onClose }) {
 
           toast.success("Login successful 🎉", {
             style: {
-              border: "1px solid #f97316",
+              border: "1px solid #1D4ED8",
               padding: "12px",
-              color: "#9a3412",
+              color: "#1E40AF",
             },
             iconTheme: {
-              primary: "#f97316",
+              primary: "#1D4ED8",
               secondary: "#fff",
             }
           });
@@ -103,7 +103,7 @@ function LoginModal({ isOpen, onClose }) {
   const handleGoogleResponse = async (response) => {
     try {
       setLoading(true);
-      const res = await fetch("https://repressedly-hyperopic-rosario.ngrok-free.dev/api/auth/google", {
+      const res = await fetch("http://localhost:5000/api/auth/google", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -158,11 +158,12 @@ function LoginModal({ isOpen, onClose }) {
 
       <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 p-4">
         <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh]  flex">
-          <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-orange-600 to-orange-500 items-center justify-center p-8">
+          <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-900 to-blue-600 items-center justify-center p-8">
             <div className="text-center text-white">
               <div className="mb-6">
                 <h1 className="text-4xl font-bold mb-3">TimeTrack Pro</h1>
-                <p className="text-lg text-orange-100">Streamline Your Time Management</p>
+                <p className="text-lg text-blue-100
+">Streamline Your Time Management</p>
               </div>
 
               <div className="bg-white bg-opacity-10 backdrop-blur-sm rounded-2xl p-6">
@@ -173,7 +174,7 @@ function LoginModal({ isOpen, onClose }) {
                     </div>
                     <div className="text-left">
                       <h3 className="font-semibold text-base">Track Time Efficiently</h3>
-                      <p className="text-orange-100 text-sm">Monitor your work hours seamlessly</p>
+                      <p className="text-blue-100 text-sm">Monitor your work hours seamlessly</p>
                     </div>
                   </div>
 
@@ -183,7 +184,7 @@ function LoginModal({ isOpen, onClose }) {
                     </div>
                     <div className="text-left">
                       <h3 className="font-semibold text-base">Manage Projects</h3>
-                      <p className="text-orange-100 text-sm">Keep all your projects organized</p>
+                      <p className="text-blue-100 text-sm">Keep all your projects organized</p>
                     </div>
                   </div>
 
@@ -193,7 +194,7 @@ function LoginModal({ isOpen, onClose }) {
                     </div>
                     <div className="text-left">
                       <h3 className="font-semibold text-base">Boost Productivity</h3>
-                      <p className="text-orange-100 text-sm">Achieve more in less time</p>
+                      <p className="text-blue-100 text-sm">Achieve more in less time</p>
                     </div>
                   </div>
                 </div>
@@ -212,7 +213,7 @@ function LoginModal({ isOpen, onClose }) {
 
             <div className="max-w-md mx-auto">
               <div className="lg:hidden text-center mb-6">
-                <h1 className="text-2xl font-bold text-orange-600 mb-1">TimeTrack Pro</h1>
+                <h1 className="text-2xl font-bold text-blue-700 mb-1">TimeTrack Pro</h1>
                 <p className="text-gray-600 text-sm">Welcome back!</p>
               </div>
               <div className='overflow-y-hidden'>
@@ -244,7 +245,7 @@ function LoginModal({ isOpen, onClose }) {
                         if (errors.message) setErrors({ ...errors, message: "" });
                       }}
                       placeholder="Enter your email"
-                      className={`w-64 px-4 py-2.5 border-2 rounded-lg focus:outline-none transition ${errors.email ? 'border-red-500' : 'border-gray-300 focus:border-orange-600'
+                      className={`w-64 px-4 py-2.5 border-2 rounded-lg focus:outline-none transition ${errors.email ? 'border-red-500' : 'border-gray-300 focus:border-[#2F6FD6]'
                         }`}
                     />
                     {errors.email && (
@@ -270,7 +271,7 @@ function LoginModal({ isOpen, onClose }) {
                           if (errors.message) setErrors({ ...errors, message: '' });
                         }}
                         placeholder="Enter your password"
-                        className={`w-64 px-4 py-2.5 pr-12 border-2 rounded-lg focus:outline-none transition ${errors.password ? 'border-red-500' : 'border-gray-300 focus:border-orange-600'
+                        className={`w-64 px-4 py-2.5 pr-12 border-2 rounded-lg focus:outline-none transition ${errors.password ? 'border-red-500' : 'border-gray-300 focus:border-[#2F6FD6]'
                           }`}
                       />
                       <button
@@ -303,17 +304,18 @@ function LoginModal({ isOpen, onClose }) {
                         type="checkbox"
                         checked={rememberMe}
                         onChange={(e) => setRememberMe(e.target.checked)}
-                        className="w-4 h-4 text-orange-600 border-gray-300 rounded focus:ring-orange-500"
+                        className="w-4 h-4 text-blue-700 border-gray-300 rounded focus:ring-blue-700"
                       />
                       <span className="ml-2 text-sm text-gray-600">Remember me</span>
                     </label>
-                    <button onClick={() => console.log('Forgot password')} className="text-sm text-orange-600 hover:text-orange-700 font-semibold">
+                    <button onClick={() => console.log('Forgot password')} className="text-sm text-[#2F6FD6] hover:text-[#1F4FBF] font-semibold">
                       Forgot Password?
                     </button>
                   </div>
                   <button
                     onClick={handleSubmit}
-                    className="w-full bg-orange-600 text-white py-2.5 rounded-lg font-semibold hover:bg-orange-700 transition duration-200 shadow-lg hover:shadow-xl"
+                    className="w-full bg-blue-700 text-white py-2.5 rounded-lg font-semibold hover:bg-blue-800 transition duration-200 shadow-lg hover:shadow-xl"
+
                   >
                     Login
                   </button>

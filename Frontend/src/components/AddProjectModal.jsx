@@ -48,7 +48,7 @@ function AddProjectModal({
               value={projectName}
               onChange={(e) => setProjectName(e.target.value)}
               placeholder="Enter project name"
-              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full border rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
           <div>
@@ -58,7 +58,7 @@ function AddProjectModal({
             <select
               value={selectedManager}
               onChange={(e) => setSelectedManager(e.target.value)}
-              className="w-full border rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full border rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
               <option value="">Select Manager</option>
 
@@ -84,7 +84,7 @@ function AddProjectModal({
 
           <button
             onClick={handleSubmit}
-            className="px-4 py-2 rounded-lg bg-orange-600 text-white hover:bg-orange-700"
+            className="px-4 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700"
           >
             Add Project
           </button>

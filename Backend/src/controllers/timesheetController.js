@@ -14,11 +14,25 @@ const getDateRange = (filter, from, to) => {
       break;
 
     case "week":
-      start = new Date();
-      start.setDate(start.getDate() - 6);
+      const today = new Date();
+
+      // Get day number (0 = Sunday, 1 = Monday, ..., 6 = Saturday)
+      const day = today.getDay();
+
+      // Calculate Monday
+      const diffToMonday = day === 0 ? -6 : 1 - day;
+
+      start = new Date(today);
+      start.setDate(today.getDate() + diffToMonday);
       start.setHours(0, 0, 0, 0);
-      end = new Date();
+
+      // Calculate Sunday
+      end = new Date(start);
+      end.setDate(start.getDate() + 6);
+      end.setHours(23, 59, 59, 999);
+
       break;
+
 
     case "month":
       start = new Date();
@@ -91,11 +105,68 @@ const getUsersTimeSummary = async (req, res) => {
 /* ===============================
    2️⃣ EMPLOYEE → PROJECT DETAILSAXZ
 ================================ */
+
+// const getEmployeeProjectDetails = async (req, res) => {
+//   try {
+//     const { employeeId } = req.params;
+//     const { filter, from, to } = req.query;
+//     const { start, end } = getDateRange(filter, from, to);
+
+//     const data = await Timesheet.aggregate([
+//       {
+//         $match: {
+//           employee_id: new mongoose.Types.ObjectId(employeeId),
+//           start_time: { $lt: end },
+//           end_time: { $gt: start }
+//         }
+//       },
+//       {
+//         $project: {
+//           project_id: 1,
+//           duration: { $subtract: ["$end_time", "$start_time"] }
+//         }
+//       },
+//       {
+//         $group: {
+//           _id: "$project_id",
+//           totalTime: { $sum: "$duration" }
+//         }
+//       },
+//       {
+//         $lookup: {
+//           from: "projects",
+//           localField: "_id",
+//           foreignField: "_id",
+//           as: "project"
+//         }
+//       },
+//       { $unwind: "$project" },
+//       {
+//         $project: {
+//           _id: 0,
+//           projectName: "$project.project_name",
+//           totalTime: 1
+//         }
+//       }
+//     ]);
+
+//     res.json({ success: true, data });
+//   } catch (err) {
+//     res.status(500).json({ success: false, message: err.message });
+//   }
+// };
+
 const getEmployeeProjectDetails = async (req, res) => {
   try {
     const { employeeId } = req.params;
     const { filter, from, to } = req.query;
+
     const { start, end } = getDateRange(filter, from, to);
+
+    // Check if single day filter
+    const isSingleDay =
+      filter === "today" ||
+      (from && to && new Date(from).toDateString() === new Date(to).toDateString());
 
     const data = await Timesheet.aggregate([
       {
@@ -106,15 +177,21 @@ const getEmployeeProjectDetails = async (req, res) => {
         }
       },
       {
-        $project: {
-          project_id: 1,
+        $addFields: {
           duration: { $subtract: ["$end_time", "$start_time"] }
         }
       },
       {
         $group: {
           _id: "$project_id",
-          totalTime: { $sum: "$duration" }
+          totalTime: { $sum: "$duration" },
+          tasks: {
+            $push: {
+              description: "$description",
+              date: "$date",
+              duration: "$duration"
+            }
+          }
         }
       },
       {
@@ -130,16 +207,40 @@ const getEmployeeProjectDetails = async (req, res) => {
         $project: {
           _id: 0,
           projectName: "$project.project_name",
-          totalTime: 1
+          totalTime: 1,
+          tasks: 1
         }
       }
     ]);
 
-    res.json({ success: true, data });
+    // Format duration into HH:mm
+    const formatDuration = (ms) => {
+      const totalMinutes = Math.floor(ms / (1000 * 60));
+      const hours = Math.floor(totalMinutes / 60);
+      const minutes = totalMinutes % 60;
+      return `${String(hours).padStart(2, "0")}:${String(minutes).padStart(2, "0")}`;
+    };
+
+    const formattedData = data.map(project => ({
+      projectName: project.projectName,
+      totalTime: formatDuration(project.totalTime),
+      tasks: project.tasks.map(task => ({
+        description: task.description,
+        ...(isSingleDay
+          ? {}
+          : { date: task.date }),
+        time: formatDuration(task.duration)
+      }))
+    }));
+
+    res.json({ success: true, data: formattedData });
+
   } catch (err) {
     res.status(500).json({ success: false, message: err.message });
   }
 };
+
+
 /* ===============================
    3️⃣ DETAILS VIEW (ALL USERS)
 ================================ */
@@ -204,7 +305,7 @@ const getAdminDashboardData = async (req, res) => {
     const totalProjects = await Project.countDocuments();
 
     // Active users (assuming status = "active")
-    const activeUsers = await User.countDocuments({ role: {$ne:"admin" }});
+    const activeUsers = await User.countDocuments({ role: { $ne: "admin" } });
 
     // Start & end of current week
     const startOfWeek = new Date();
@@ -723,7 +824,7 @@ const getFilteredTimesheet = async (req, res) => {
         $match: {
           employee_id: empId,
           start_time: { $gte: fromDate, $lte: toDate }
- // 🔥 important
+          // 🔥 important
         }
       },
 

@@ -318,5 +318,85 @@ const endProject = async (req, res) => {
   }
 };
 const deleteProject = async (req, res) => { }
-const updateProject = async (req, res) => { }
+const updateProject = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const { project_name, manager_id } = req.body;
+
+    const project = await Project.findById(projectId);
+    if (!project) {
+      return res.status(404).json({
+        success: false,
+        message: "Project not found",
+      });
+    }
+
+    // Update project name if provided
+    if (project_name) {
+      project.project_name = project_name;
+    }
+
+    // If manager is changing
+    if (manager_id && manager_id !== project.manager_id.toString()) {
+
+      const newManager = await User.findById(manager_id);
+      if (!newManager) {
+        return res.status(404).json({
+          success: false,
+          message: "New manager not found",
+        });
+      }
+
+      const oldManagerId = project.manager_id;
+
+      /* ===========================
+         1️⃣ Update Project Manager
+      =========================== */
+      project.manager_id = manager_id;
+
+      /* ===========================
+         2️⃣ Update Timesheets
+      =========================== */
+      await Timesheet.updateMany(
+        { project_id: projectId },
+        { $set: { manager_id: manager_id } }
+      );
+
+      /* ===========================
+         3️⃣ Update Old Manager Status
+      =========================== */
+      const oldManagerProjects = await Project.countDocuments({
+        manager_id: oldManagerId,
+      });
+
+      if (oldManagerProjects <= 1) {
+        await User.findByIdAndUpdate(oldManagerId, {
+          status: "not_in_project",
+        });
+      }
+
+      /* ===========================
+         4️⃣ Update New Manager Status
+      =========================== */
+      await User.findByIdAndUpdate(manager_id, {
+        status: "in_project",
+      });
+    }
+
+    await project.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Project updated successfully",
+      data: project,
+    });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      success: false,
+      message: "Server error",
+    });
+  }
+ }
 module.exports = { addUser, transferRespons, updateUser, removeUser, getProjects, addProject, deleteProject, updateProject, endProject };

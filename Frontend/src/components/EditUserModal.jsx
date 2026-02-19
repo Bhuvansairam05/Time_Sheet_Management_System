@@ -105,7 +105,7 @@ function EditUserModal({ isOpen, onClose, user, managers, onUpdate }) {
               disabled={!isDirty}
               className={`px-4 py-2 rounded-lg text-white ${
                 isDirty
-                  ? "bg-orange-600 hover:bg-orange-700"
+                  ? "bg-blue-600 hover:bg-blue-700"
                   : "bg-gray-400 cursor-not-allowed"
               }`}
             >

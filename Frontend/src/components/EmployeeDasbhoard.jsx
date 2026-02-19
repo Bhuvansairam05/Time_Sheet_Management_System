@@ -4,7 +4,7 @@ import axios from "axios";
 import { useLocation, useNavigate } from "react-router-dom";
 import LogoutConfirmModal from "./LogoutConfirmModal.jsx";
 import Loader from "./Loader.jsx";
-import logo from "../assets/Logo_remove.png";
+import logo from "../assets/Gradious_ai_logo.png";
 import { Clock, Calendar, TrendingUp, Plus, Filter } from "lucide-react";
 function EmployeeDashboard() {
   const [showModal, setShowModal] = useState(false);
@@ -67,7 +67,7 @@ function EmployeeDashboard() {
       }
 
       const res = await axios.post(
-        "https://repressedly-hyperopic-rosario.ngrok-free.dev/api/timesheet/addTimesheet",
+        "http://localhost:5000/api/timesheet/addTimesheet",
         { tasks: payload }
       );
 
@@ -102,7 +102,7 @@ function EmployeeDashboard() {
     try {
       setLoading(true);
 
-      let url = `https://repressedly-hyperopic-rosario.ngrok-free.dev/api/timesheet/filteredTimesheet?type=${timeFilter.toLowerCase()}&employeeId=${employeeId}`;
+      let url = `http://localhost:5000/api/timesheet/filteredTimesheet?type=${timeFilter.toLowerCase()}&employeeId=${employeeId}`;
 
       if (filterType === "Custom") {
         url += `&from=${fromDate}&to=${toDate}`;
@@ -158,7 +158,7 @@ function EmployeeDashboard() {
   const fetchTasks = async () => {
     try {
       const res = await axios.get(
-        `https://repressedly-hyperopic-rosario.ngrok-free.dev/api/timesheet/employeeTimesheet/${employeeId}`
+        `http://localhost:5000/api/timesheet/employeeTimesheet/${employeeId}`
       );
 
       if (res.data.success) {
@@ -178,7 +178,7 @@ function EmployeeDashboard() {
     const fetchProjects = async () => {
       try {
         const res = await axios.get(
-          "https://repressedly-hyperopic-rosario.ngrok-free.dev/api/timesheet/projectsList"
+          "http://localhost:5000/api/timesheet/projectsList"
         );
 
         if (res.data.success) {
@@ -259,7 +259,7 @@ function EmployeeDashboard() {
       };
 
       const res = await axios.post(
-        "https://repressedly-hyperopic-rosario.ngrok-free.dev/api/timesheet/addTimesheet",
+        "http://localhost:5000/api/timesheet/addTimesheet",
         body
       );
 
@@ -285,8 +285,8 @@ function EmployeeDashboard() {
     <>
       {loading && <Loader />}
 
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-50">
-        <nav className="bg-white shadow-sm border-b border-orange-100">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
+        <nav className="bg-white shadow-sm border-b border-blue-100">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center gap-3">
@@ -295,7 +295,7 @@ function EmployeeDashboard() {
                   alt="TimeTrack Pro Logo"
                   className="h-8 w-auto object-contain"
                 />
-                <h1 className="text-2xl font-bold bg-gradient-to-r from-orange-500 to-orange-600 bg-clip-text text-transparent">
+                <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent">
                   TimeTrack Pro
                 </h1>
                 <span className="ml-2 px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
@@ -305,7 +305,7 @@ function EmployeeDashboard() {
 
               <button
                 onClick={handleLogout}
-                className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-2 rounded-lg hover:shadow-lg hover:shadow-orange-200 transition-all duration-300 font-medium"
+                className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-6 py-2 rounded-lg hover:shadow-lg hover:shadow-blue-200 transition-all duration-300 font-medium"
               >
                 Logout
               </button>
@@ -320,57 +320,57 @@ function EmployeeDashboard() {
             <p className="text-gray-600">Track your tasks and manage your time effectively</p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className="bg-white rounded-xl shadow-sm border border-orange-100 p-6 hover:shadow-md transition-shadow">
+            <div className="bg-white rounded-xl shadow-sm border border-blue-100 p-6 hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Today's Hours</p>
-                  <p className="text-3xl font-bold text-orange-600">{stats.todayHours}</p>
+                  <p className="text-3xl font-bold text-blue-600">{stats.todayHours}</p>
                   <p className="text-xs text-gray-500 mt-1">{stats.todayTasks} tasks</p>
                 </div>
-                <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                  <Clock className="w-6 h-6 text-orange-600" />
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <Clock className="w-6 h-6 text-blue-600" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-orange-100 p-6 hover:shadow-md transition-shadow">
+            <div className="bg-white rounded-xl shadow-sm border border-blue-100 p-6 hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Total Hours</p>
-                  <p className="text-3xl font-bold text-orange-600">{stats.totalHours}</p>
+                  <p className="text-3xl font-bold text-blue-600">{stats.totalHours}</p>
                   <p className="text-xs text-gray-500 mt-1">This {timeFilter}</p>
                 </div>
-                <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                  <Calendar className="w-6 h-6 text-orange-600" />
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <Calendar className="w-6 h-6 text-blue-600" />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-xl shadow-sm border border-orange-100 p-6 hover:shadow-md transition-shadow">
+            <div className="bg-white rounded-xl shadow-sm border border-blue-100 p-6 hover:shadow-md transition-shadow">
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-600 mb-1">Total Tasks</p>
-                  <p className="text-3xl font-bold text-orange-600">{stats.totalTasks}</p>
+                  <p className="text-3xl font-bold text-blue-600">{stats.totalTasks}</p>
                   <p className="text-xs text-gray-500 mt-1">Completed {timeFilter}</p>
                 </div>
-                <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
-                  <TrendingUp className="w-6 h-6 text-orange-600" />
+                <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
+                  <TrendingUp className="w-6 h-6 text-blue-600" />
                 </div>
               </div>
             </div>
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-orange-100 overflow-hidden">
+            <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-blue-100 overflow-hidden">
               <div className="p-6 border-b border-gray-100 flex items-center justify-between">
                 <h3 className="text-xl font-bold text-gray-900">Task History</h3>
                 <div className="flex items-center gap-3">
                   <div className="relative">
                     <button
                       onClick={() => setShowFilterDropdown(!showFilterDropdown)}
-                      className="flex items-center gap-2 px-4 py-2 border border-orange-200 rounded-lg hover:bg-orange-50 transition-colors"
+                      className="flex items-center gap-2 px-4 py-2 border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors"
                     >
-                      <Filter className="w-4 h-4 text-orange-600" />
+                      <Filter className="w-4 h-4 text-blue-600" />
                       <span className="text-sm font-medium text-gray-700">{timeFilter}</span>
                       <svg className="w-4 h-4 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
@@ -387,8 +387,8 @@ function EmployeeDashboard() {
                               setShowFilterDropdown(false);
                               if (option !== "Custom") fetchFilteredTasks(option);
                             }}
-                            className={`w-full text-left px-4 py-2 hover:bg-orange-50 ${timeFilter === option
-                              ? "bg-orange-100 text-orange-600 font-medium"
+                            className={`w-full text-left px-4 py-2 hover:bg-blue-50 ${timeFilter === option
+                              ? "bg-blue-100 text-blue-600 font-medium"
                               : "text-gray-700"
                               }`}
                           >
@@ -400,7 +400,7 @@ function EmployeeDashboard() {
                   </div>
                   <button
                     onClick={() => setShowModal(true)}
-                    className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-5 py-2 rounded-lg flex items-center gap-2 hover:shadow-lg"
+                    className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-5 py-2 rounded-lg flex items-center gap-2 hover:shadow-lg"
                   >
                     Log Hours
                   </button>
@@ -409,7 +409,7 @@ function EmployeeDashboard() {
               </div>
 
               {timeFilter === "Custom" && (
-                <div className="flex gap-4 p-4 bg-orange-50 border-b border-orange-100">
+                <div className="flex gap-4 p-4 bg-blue-50 border-b border-blue-100">
                   <input
                     type="date"
                     value={customDates.from}
@@ -430,7 +430,7 @@ function EmployeeDashboard() {
                     onClick={() =>
                       fetchFilteredTasks("Custom", customDates.from, customDates.to)
                     }
-                    className="bg-orange-500 text-white px-4 rounded-lg"
+                    className="bg-blue-500 text-white px-4 rounded-lg"
                   >
                     Apply
                   </button>
@@ -440,15 +440,15 @@ function EmployeeDashboard() {
               <div className="overflow-x-auto">
                 {tasks.length === 0 ? (
                   <div className="p-12 text-center">
-                    <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Clock className="w-8 h-8 text-orange-400" />
+                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Clock className="w-8 h-8 text-blue-400" />
                     </div>
                     <p className="text-gray-500 mb-2">No tasks added yet</p>
                     <p className="text-sm text-gray-400">Start tracking your time by adding a task</p>
                   </div>
                 ) : (
                   <table className="w-full">
-                    <thead className="bg-orange-50 border-b border-orange-100">
+                    <thead className="bg-blue-50 border-b border-blue-100">
                       <tr>
                         <th className="px-6 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
                           S.No
@@ -463,7 +463,7 @@ function EmployeeDashboard() {
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                       {tasks.map((task, i) => (
-                        <tr key={task._id || i} className="hover:bg-orange-50 transition-colors">
+                        <tr key={task._id || i} className="hover:bg-blue-50 transition-colors">
                           <td className="px-6 py-4 text-sm text-gray-900">
                             {i + 1}
                           </td>
@@ -478,7 +478,7 @@ function EmployeeDashboard() {
                             </div>
                           </td>
                           <td className="px-6 py-4">
-                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-700">
+                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-700">
                               {task.duration} hrs
                             </span>
                           </td>
@@ -488,7 +488,7 @@ function EmployeeDashboard() {
                   </table>
                 )}
               </div>
-              <div className="p-6 border-t border-orange-100 bg-orange-50">
+              <div className="p-6 border-t border-blue-100 bg-blue-50">
                 <h4 className="font-semibold text-gray-800 mb-2">Summary</h4>
                 <p className="text-sm text-gray-700">
                   Total Tasks: <span className="font-bold">{summary.totalTasks}</span>
@@ -574,7 +574,7 @@ function EmployeeDashboard() {
 
                 <button
                   onClick={handleSubmitAll}
-                  className="bg-orange-500 text-white px-4 py-2 rounded"
+                  className="bg-blue-500 text-white px-4 py-2 rounded"
                 >
                   Submit
                 </button>

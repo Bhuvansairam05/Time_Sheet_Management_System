@@ -16,25 +16,31 @@ import {
 import { useEffect, useState } from "react";
 import Loader from "./Loader.jsx";
 import toast from "react-hot-toast";
+
 function AdminDashboard() {
   const [loading, setLoading] = useState(false);
   const [stats, setStats] = useState([]);
   const [projectTimeData, setProjectTimeData] = useState([]);
   const [weeklyTrendData, setWeeklyTrendData] = useState([]);
-  const COLORS = ["#FF6B00", "#FF8C3A", "#FFB366", "#FFC999", "#FFDAB3"];
+
+  // 🔵 Updated Blue Palette
+  const COLORS = ["#1D4ED8", "#2563EB", "#3B82F6", "#60A5FA", "#93C5FD"];
+
   useEffect(() => {
     fetchDashboardData();
   }, []);
-const normalizeWeekData = (data = []) => {
-  const week = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
-  return week.map((d) => {
-    const found = data.find((item) => item.day === d);
-    return {
-      day: d,
-      hours: found ? found.hours : 0,
-    };
-  });
-};
+
+  const normalizeWeekData = (data = []) => {
+    const week = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    return week.map((d) => {
+      const found = data.find((item) => item.day === d);
+      return {
+        day: d,
+        hours: found ? found.hours : 0,
+      };
+    });
+  };
+
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
@@ -42,7 +48,7 @@ const normalizeWeekData = (data = []) => {
       const token = localStorage.getItem("token");
 
       const response = await fetch(
-        "https://repressedly-hyperopic-rosario.ngrok-free.dev/api/timesheet/dashboard",
+        "http://localhost:5000/api/timesheet/dashboard",
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -64,7 +70,6 @@ const normalizeWeekData = (data = []) => {
 
       setProjectTimeData(data.projectTimeData || []);
       setWeeklyTrendData(normalizeWeekData(data.weeklyTrendData));
-
     } catch (error) {
       toast.error(error.message || "Something went wrong");
     } finally {
@@ -83,11 +88,13 @@ const normalizeWeekData = (data = []) => {
             Welcome back! Here's what's happening with your projects.
           </p>
         </div>
+
+        {/* 🔵 Stats Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {stats.map((stat, index) => (
             <div
               key={index}
-              className="bg-white rounded-lg shadow-md p-6 border-l-4 border-orange-600"
+              className="bg-white rounded-lg shadow-md p-6 border-l-4 border-blue-700"
             >
               <div className="flex justify-between items-center">
                 <div>
@@ -96,18 +103,21 @@ const normalizeWeekData = (data = []) => {
                     {stat.value}
                   </p>
                 </div>
-                <div className="bg-orange-100 p-4 rounded-full">
+                <div className="bg-blue-100 p-4 rounded-full">
                   <span className="text-3xl">{stat.icon}</span>
                 </div>
               </div>
             </div>
           ))}
         </div>
+
+        {/* 🔵 Charts Row */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="bg-white rounded-lg shadow-md p-6">
             <h3 className="text-xl font-bold mb-4">
               Time Spent per Project
             </h3>
+
             {projectTimeData.length > 0 ? (
               <ResponsiveContainer width="100%" height={300}>
                 <BarChart data={projectTimeData}>
@@ -121,7 +131,7 @@ const normalizeWeekData = (data = []) => {
                   <YAxis />
                   <Tooltip />
                   <Legend />
-                  <Bar dataKey="hours" fill="#FF6B00" />
+                  <Bar dataKey="hours" fill="#1D4ED8" />
                 </BarChart>
               </ResponsiveContainer>
             ) : (
@@ -130,6 +140,7 @@ const normalizeWeekData = (data = []) => {
               </p>
             )}
           </div>
+
           <div className="bg-white rounded-lg shadow-md p-6">
             <h3 className="text-xl font-bold mb-4">
               Project Time Distribution
@@ -164,6 +175,8 @@ const normalizeWeekData = (data = []) => {
             )}
           </div>
         </div>
+
+        {/* 🔵 Weekly Trend */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <h3 className="text-xl font-bold mb-4">
             Weekly Time Trend
@@ -180,7 +193,7 @@ const normalizeWeekData = (data = []) => {
                 <Line
                   type="monotone"
                   dataKey="hours"
-                  stroke="#FF6B00"
+                  stroke="#1D4ED8"
                   strokeWidth={2}
                 />
               </LineChart>
@@ -195,4 +208,5 @@ const normalizeWeekData = (data = []) => {
     </>
   );
 }
+
 export default AdminDashboard;

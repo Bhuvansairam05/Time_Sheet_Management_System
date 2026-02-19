@@ -23,6 +23,8 @@ function Employees() {
     const [expandedRows, setExpandedRows] = useState({});
     const [expandAll, setExpandAll] = useState(false);
     const [detailsData, setDetailsData] = useState({});
+    const [expandedProjects, setExpandedProjects] = useState({});
+    const [employeeProjectExpandAll, setEmployeeProjectExpandAll] = useState({});
 
     /* ===============================
        UTILITY → ms to HH:MM
@@ -35,18 +37,47 @@ function Employees() {
             .toString()
             .padStart(2, "0")}`;
     };
+    const toggleProject = (userId, projectIndex) => {
+        setExpandedProjects((prev) => ({
+            ...prev,
+            [userId]: {
+                ...prev[userId],
+                [projectIndex]: !prev[userId]?.[projectIndex],
+            },
+        }));
+    };
+    const handleEmployeeProjectExpandAll = (userId, totalProjects) => {
+        const newState = !employeeProjectExpandAll[userId];
+
+        // toggle button text state
+        setEmployeeProjectExpandAll(prev => ({
+            ...prev,
+            [userId]: newState
+        }));
+
+        const expandedMap = {};
+        for (let i = 0; i < totalProjects; i++) {
+            expandedMap[i] = newState;
+        }
+
+        setExpandedProjects(prev => ({
+            ...prev,
+            [userId]: expandedMap
+        }));
+    };
+
     const fetchEmployeesWithTime = async () => {
         try {
             setLoading(true);
             const token = localStorage.getItem("token");
 
-            let timeUrl = `https://repressedly-hyperopic-rosario.ngrok-free.dev/api/timesheet/summary?filter=${filter}`;
+            let timeUrl = `http://localhost:5000/api/timesheet/summary?filter=${filter}`;
             if (filter === "custom" && fromDate && toDate) {
                 timeUrl += `&from=${fromDate}&to=${toDate}`;
             }
 
             const [usersRes, timeRes] = await Promise.all([
-                fetch("https://repressedly-hyperopic-rosario.ngrok-free.dev/api/auth/getEmployees", {
+                fetch("http://localhost:5000/api/auth/getEmployees", {
                     headers: { Authorization: `Bearer ${token}` },
                 }),
                 fetch(timeUrl, {
@@ -68,7 +99,7 @@ function Employees() {
             }));
 
             setEmployees(merged);
-            setManagers(merged.filter((u) => u.role==="manager"));
+            setManagers(merged.filter((u) => u.role === "manager"));
         } catch {
             toast.error("Error loading employees");
         } finally {
@@ -98,7 +129,7 @@ function Employees() {
                                 const token = localStorage.getItem("token");
 
                                 await fetch(
-                                    `https://repressedly-hyperopic-rosario.ngrok-free.dev/api/admin/removeUser/${id}`,
+                                    `http://localhost:5000/api/admin/removeUser/${id}`,
                                     {
                                         method: "DELETE",
                                         headers: { Authorization: `Bearer ${token}` },
@@ -146,7 +177,7 @@ function Employees() {
             const token = localStorage.getItem("token");
 
             const res = await fetch(
-                `https://repressedly-hyperopic-rosario.ngrok-free.dev/api/projects/byManager/${managerId}`,
+                `http://localhost:5000/api/projects/byManager/${managerId}`,
                 {
                     headers: { Authorization: `Bearer ${token}` },
                 }
@@ -164,7 +195,7 @@ function Employees() {
             const token = localStorage.getItem("token");
 
             const response = await fetch(
-                "https://repressedly-hyperopic-rosario.ngrok-free.dev/api/admin/addUser",
+                "http://localhost:5000/api/admin/addUser",
                 {
                     method: "POST",
                     headers: {
@@ -209,7 +240,7 @@ function Employees() {
             const token = localStorage.getItem("token");
 
             const response = await fetch(
-                `https://repressedly-hyperopic-rosario.ngrok-free.dev/api/admin/updateUser/${userId}`,
+                `http://localhost:5000/api/admin/updateUser/${userId}`,
                 {
                     method: "PUT",
                     headers: {
@@ -233,42 +264,42 @@ function Employees() {
     };
 
     const handleTransferConfirm = async (newManagerId) => {
-  try {
-    const token = localStorage.getItem("token");
+        try {
+            const token = localStorage.getItem("token");
 
-    await fetch(`https://repressedly-hyperopic-rosario.ngrok-free.dev/api/admin/transferResponsibilities`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        oldManagerId: managerToTransfer._id,
-        newManagerId,
-      }),
-    });
+            await fetch(`http://localhost:5000/api/admin/transferResponsibilities`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify({
+                    oldManagerId: managerToTransfer._id,
+                    newManagerId,
+                }),
+            });
 
-    toast.success("Responsibilities transferred");
+            toast.success("Responsibilities transferred");
 
-    setShowTransferModal(false);
+            setShowTransferModal(false);
 
-    // 🎯 CONTINUE ORIGINAL ACTION
-    if (pendingAction === "delete") {
-      actualDelete(managerToTransfer._id, managerToTransfer.name);
-    }
+            // 🎯 CONTINUE ORIGINAL ACTION
+            if (pendingAction === "delete") {
+                actualDelete(managerToTransfer._id, managerToTransfer.name);
+            }
 
-    if (pendingAction === "roleChange") {
-      normalUpdate(managerToTransfer._id, pendingUpdateData);
-    }
+            if (pendingAction === "roleChange") {
+                normalUpdate(managerToTransfer._id, pendingUpdateData);
+            }
 
-    // reset
-    setPendingAction(null);
-    setPendingUpdateData(null);
+            // reset
+            setPendingAction(null);
+            setPendingUpdateData(null);
 
-  } catch {
-    toast.error("Transfer failed");
-  }
-};
+        } catch {
+            toast.error("Transfer failed");
+        }
+    };
     const deleteHandler = (user) => {
         if (user.role === "manager") {
             setManagerToTransfer(user);
@@ -285,7 +316,7 @@ function Employees() {
         try {
             const token = localStorage.getItem("token");
 
-            let url = `https://repressedly-hyperopic-rosario.ngrok-free.dev/api/timesheet/employee/${userId}?filter=${filter}`;
+            let url = `http://localhost:5000/api/timesheet/employee/${userId}?filter=${filter}`;
             if (filter === "custom" && fromDate && toDate) {
                 url += `&from=${fromDate}&to=${toDate}`;
             }
@@ -334,11 +365,12 @@ function Employees() {
                             onClick={handleExpandAll}
                             className="bg-blue-600 text-white px-4 py-2 rounded"
                         >
-                            Expand All
+                            {expandAll ? "Collapse All" : "Expand All"}
                         </button>
 
+
                         <button
-                            className="bg-orange-600 text-white px-4 py-2 rounded-lg"
+                            className="bg-blue-600 text-white px-4 py-2 rounded-lg"
                             onClick={() => setShowAddUserModal(true)}
                         >
                             + Add User
@@ -407,7 +439,7 @@ function Employees() {
                                         {u.name}
                                     </td>
                                     <td className="px-4 py-3">
-                                        {u.role==="manager" ? "Yes" : "No"}
+                                        {u.role === "manager" ? "Yes" : "No"}
                                     </td>
                                     <td className="px-4 py-3 text-center">
                                         {formatTime(u.timeWorked)}
@@ -440,31 +472,144 @@ function Employees() {
                                             <table className="w-full border">
                                                 <thead className="bg-gray-200">
                                                     <tr>
-                                                        <th className="px-3 py-2 text-left">
-                                                            Project
-                                                        </th>
-                                                        <th className="px-3 py-2 text-right">
-                                                            Time
-                                                        </th>
+                                                        <th className="px-3 py-2 text-left">Project</th>
+                                                        <th className="px-3 py-2 text-right"><div className="flex items-center justify-end gap-2">
+                                                            <span>Time</span>
+
+                                                            <button
+                                                                onClick={(e) => {
+                                                                    e.stopPropagation();
+                                                                    handleEmployeeProjectExpandAll(
+                                                                        u._id,
+                                                                        detailsData[u._id]?.length || 0
+                                                                    );
+                                                                }}
+                                                                className="text-xs bg-blue-100 text-blue-600 px-2 py-1 rounded hover:bg-blue-200 transition"
+                                                            >
+                                                                {employeeProjectExpandAll[u._id] ? "Collapse All" : "Expand All"}
+                                                            </button>
+                                                        </div></th>
                                                     </tr>
                                                 </thead>
+
                                                 <tbody>
                                                     {detailsData[u._id]?.map((p, index) => (
-                                                        <tr key={index}>
-                                                            <td className="text-left">
-                                                                {p.projectName}
-                                                            </td>
-                                                            <td className="px-3 py-2 text-right">
-                                                                {formatTime(p.totalTime)}
-                                                            </td>
-                                                        </tr>
-                                                    ))}
+                                                        <>
+                                                            {/* Project Row */}
+                                                            <tr
+                                                                key={index}
+                                                                className="cursor-pointer hover:bg-gray-100"
+                                                                onClick={() => toggleProject(u._id, index)}
+                                                            >
+                                                                <td className="px-3 py-2 font-medium text-gray-800">
+                                                                    {expandedProjects[u._id]?.[index] ? "▼ " : "▶ "}
+                                                                    {p.projectName}
+                                                                </td>
+                                                                <td className="px-3 py-2 text-right font-semibold text-gray-700">
+                                                                    {p.totalTime}
+                                                                </td>
+                                                            </tr>
 
+                                                            {/* Tasks Row */}
+                                                            {expandedProjects[u._id]?.[index] && (
+                                                                <tr>
+                                                                    <td colSpan="2" className="px-6 py-4 bg-gray-50">
+                                                                        <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+
+                                                                            {/* <table className="w-full table-fixed text-sm">
+                                                                                <thead>
+                                                                                    <tr className="border-b text-gray-600 text-xs uppercase tracking-wide">
+                                                                                        <th className="w-1/2 text-left py-3 px-4">
+                                                                                            Task
+                                                                                        </th>
+
+                                                                                        {p.tasks?.[0]?.date && (
+                                                                                            <th className="w-1/4 text-left py-3 px-4">
+                                                                                                Date
+                                                                                            </th>
+                                                                                        )}
+
+                                                                                        <th className="px-3 py-2 text-right">
+                                                                                            Time
+                                                                                        </th>
+
+                                                                                    </tr>
+                                                                                </thead>
+
+                                                                                <tbody>
+                                                                                    {p.tasks?.map((task, tIndex) => (
+                                                                                        <tr
+                                                                                            key={tIndex}
+                                                                                            className="border-b last:border-none hover:bg-gray-50 transition"
+                                                                                        >
+                                                                                            <td className="py-3 px-4 font-medium text-gray-800">
+                                                                                                {task.description}
+                                                                                            </td>
+
+                                                                                            {task.date && (
+                                                                                                <td className="py-3 px-4 text-gray-600">
+                                                                                                    {new Date(task.date).toLocaleDateString()}
+                                                                                                </td>
+                                                                                            )}
+
+                                                                                            <td className="py-3 px-4 text-right font-semibold text-gray-700">
+                                                                                                {task.time}
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    ))}
+                                                                                </tbody>
+                                                                            </table> */}
+                                                                            <table className="w-full table-fixed text-sm">
+                                                                                <thead>
+                                                                                    <tr className="border-b text-gray-600 text-xs uppercase tracking-wide">
+                                                                                        <th className="w-1/2 text-left py-3 px-6">Task</th>
+
+                                                                                        <th className="w-1/4 text-left py-3 px-6">
+                                                                                            Date
+                                                                                        </th>
+
+                                                                                        <th className="w-1/4 text-right py-3 px-6">
+                                                                                            Time
+                                                                                        </th>
+                                                                                    </tr>
+                                                                                </thead>
+
+                                                                                <tbody>
+                                                                                    {p.tasks?.map((task, i) => (
+                                                                                        <tr
+                                                                                            key={i}
+                                                                                            className="border-b last:border-none hover:bg-gray-50 transition"
+                                                                                        >
+                                                                                            <td className="w-1/2 py-3 px-6 text-left font-medium text-gray-800">
+                                                                                                {task.description}
+                                                                                            </td>
+
+                                                                                            <td className="w-1/4 py-3 px-6 text-left text-gray-600">
+                                                                                                {task.date
+                                                                                                    ? new Date(task.date).toLocaleDateString()
+                                                                                                    : "-"}
+                                                                                            </td>
+
+                                                                                            <td className="w-1/4 py-3 px-6 text-right font-semibold text-gray-700">
+                                                                                                {task.time}
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    ))}
+                                                                                </tbody>
+                                                                            </table>
+
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            )}
+                                                        </>
+                                                    ))}
                                                 </tbody>
                                             </table>
                                         </td>
                                     </tr>
                                 )}
+
                             </>
                         ))}
                     </tbody>

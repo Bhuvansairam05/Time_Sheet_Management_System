@@ -88,7 +88,7 @@ function MyTasks() {
       }
       console.log(payload);
       const res = await axios.post(
-        "https://repressedly-hyperopic-rosario.ngrok-free.dev/api/timesheet/addTimesheet",
+        "http://localhost:5000/api/timesheet/addTimesheet",
         { tasks: payload }
       );
 
@@ -111,7 +111,7 @@ function MyTasks() {
     try {
       setLoading(true);
 
-      let url = `https://repressedly-hyperopic-rosario.ngrok-free.dev/api/timesheet/filteredTimesheet?type=${filterType.toLowerCase()}&employeeId=${employeeId}`;
+      let url = `http://localhost:5000/api/timesheet/filteredTimesheet?type=${filterType.toLowerCase()}&employeeId=${employeeId}`;
 
       if (filterType === "Custom") {
         url += `&from=${fromDate}&to=${toDate}`;
@@ -140,7 +140,7 @@ function MyTasks() {
     const fetchProjects = async () => {
       try {
         const res = await axios.get(
-          "https://repressedly-hyperopic-rosario.ngrok-free.dev/api/timesheet/projectsList"
+          "http://localhost:5000/api/timesheet/projectsList"
         );
 
         if (res.data.success) {
@@ -220,7 +220,7 @@ function MyTasks() {
     <>
       {loading && <Loader />}
 
-      <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-orange-50">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
         {/* NAVBAR */}
 
 
@@ -246,7 +246,7 @@ function MyTasks() {
 
           {/* TABLE */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-orange-100 overflow-hidden">
+            <div className="lg:col-span-2 bg-white rounded-xl shadow-sm border border-blue-100 overflow-hidden">
 
               <div className="p-6 border-b border-gray-100 flex items-center justify-between">
                 <h3 className="text-xl font-bold text-gray-900">Task History</h3>
@@ -257,9 +257,9 @@ function MyTasks() {
                   <div className="relative">
                     <button
                       onClick={() => setShowFilterDropdown(!showFilterDropdown)}
-                      className="flex items-center gap-2 px-4 py-2 border border-orange-200 rounded-lg hover:bg-orange-50 transition-colors"
+                      className="flex items-center gap-2 px-4 py-2 border border-blue-200 rounded-lg hover:bg-blue-50 transition-colors"
                     >
-                      <Filter className="w-4 h-4 text-orange-600" />
+                      <Filter className="w-4 h-4 text-blue-600" />
                       <span className="text-sm font-medium text-gray-700">{timeFilter}</span>
                     </button>
 
@@ -273,8 +273,8 @@ function MyTasks() {
                               setShowFilterDropdown(false);
                               if (option !== "Custom") fetchFilteredTasks(option);
                             }}
-                            className={`w-full text-left px-4 py-2 hover:bg-orange-50 ${timeFilter === option
-                              ? "bg-orange-100 text-orange-600 font-medium"
+                            className={`w-full text-left px-4 py-2 hover:bg-blue-50 ${timeFilter === option
+                              ? "bg-blue-100 text-blue-600 font-medium"
                               : "text-gray-700"
                               }`}
                           >
@@ -288,7 +288,7 @@ function MyTasks() {
                   {/* Log */}
                   <button
                     onClick={() => setShowModal(true)}
-                    className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-5 py-2 rounded-lg flex items-center gap-2 hover:shadow-lg"
+                    className="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-5 py-2 rounded-lg flex items-center gap-2 hover:shadow-lg"
                   >
                     Log Hours
                   </button>
@@ -296,7 +296,7 @@ function MyTasks() {
                 </div>
               </div>
               {timeFilter === "Custom" && (
-                <div className="flex gap-4 p-4 bg-orange-50 border-b border-orange-100">
+                <div className="flex gap-4 p-4 bg-blue-50 border-b border-blue-100">
                   <input
                     type="date"
                     value={customDates.from}
@@ -317,7 +317,7 @@ function MyTasks() {
                     onClick={() =>
                       fetchFilteredTasks("Custom", customDates.from, customDates.to)
                     }
-                    className="bg-orange-500 text-white px-4 rounded-lg"
+                    className="bg-blue-500 text-white px-4 rounded-lg"
                   >
                     Apply
                   </button>
@@ -328,8 +328,8 @@ function MyTasks() {
               <div className="overflow-x-auto">
                 {tasks.length === 0 ? (
                   <div className="p-12 text-center">
-                    <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                      <Clock className="w-8 h-8 text-orange-400" />
+                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                      <Clock className="w-8 h-8 text-blue-400" />
                     </div>
                     <p className="text-gray-500 mb-2">No tasks added yet</p>
                     <p className="text-sm text-gray-400">
@@ -338,7 +338,7 @@ function MyTasks() {
                   </div>
                 ) : (
                   <table className="w-full">
-                    <thead className="bg-orange-50 border-b border-orange-100">
+                    <thead className="bg-blue-50 border-b border-blue-100">
                       <tr>
                         <th className="px-6 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">S.No</th>
                         <th className="px-6 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">Project Name</th>
@@ -347,14 +347,14 @@ function MyTasks() {
                     </thead>
                     <tbody className="divide-y divide-gray-100">
                       {tasks.map((task, i) => (
-                        <tr key={task._id || i} className="hover:bg-orange-50 transition-colors">
+                        <tr key={task._id || i} className="hover:bg-blue-50 transition-colors">
                           <td className="px-6 py-4 text-sm text-gray-900">{i + 1}</td>
                           <td className="px-6 py-4">
                             <p className="text-sm font-medium text-gray-900">{task.projectName}</p>
                             <p className="text-xs text-gray-500 mt-1">{task.description}</p>
                           </td>
                           <td className="px-6 py-4">
-                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-orange-100 text-orange-700">
+                            <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-700">
                               {task.duration} hrs
                             </span>
                           </td>
@@ -365,7 +365,7 @@ function MyTasks() {
                 )}
               </div>
 
-              <div className="p-6 border-t border-orange-100 bg-orange-50">
+              <div className="p-6 border-t border-blue-100 bg-blue-50">
                 <h4 className="font-semibold text-gray-800 mb-2">Summary</h4>
                 <p className="text-sm text-gray-700">
                   Total Tasks: <span className="font-bold">{summary.totalTasks}</span>
@@ -426,7 +426,7 @@ function MyTasks() {
               <button onClick={addRow} className="bg-gray-200 px-4 py-2 rounded">Add More</button>
               <div className="flex gap-3">
                 <button onClick={closeModal} className="border px-4 py-2 rounded">Cancel</button>
-                <button onClick={handleSubmitAll} className="bg-orange-500 text-white px-4 py-2 rounded">Submit</button>
+                <button onClick={handleSubmitAll} className="bg-blue-500 text-white px-4 py-2 rounded">Submit</button>
               </div>
             </div>
 
@@ -438,13 +438,13 @@ function MyTasks() {
 }
 
 const StatCard = ({ title, value, icon,timeFilter }) => (
-  <div className="bg-white rounded-xl shadow-sm border border-orange-100 p-6 hover:shadow-md transition-shadow">
+  <div className="bg-white rounded-xl shadow-sm border border-blue-100 p-6 hover:shadow-md transition-shadow">
     <div className="flex items-center justify-between">
       <div>
         <p className="text-sm text-gray-600 mb-1">{title}</p>
-        <p className="text-3xl font-bold text-orange-600">{value}</p>
+        <p className="text-3xl font-bold text-blue-600">{value}</p>
       </div>
-      <div className="w-12 h-12 bg-orange-100 rounded-lg flex items-center justify-center">
+      <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
         {icon}
       </div>
     </div>
