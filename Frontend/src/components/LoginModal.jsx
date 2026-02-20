@@ -39,7 +39,7 @@ function LoginModal({ isOpen, onClose }) {
     if (validateForm()) {
       try {
         setLoading(true);
-        const response = await fetch("http://localhost:5000/api/auth/login", {
+        const response = await fetch("https://repressedly-hyperopic-rosario.ngrok-free.dev/api/auth/login", {
           method: "POST",
           headers: {
             "content-type": "application/json"
@@ -103,7 +103,7 @@ function LoginModal({ isOpen, onClose }) {
   const handleGoogleResponse = async (response) => {
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:5000/api/auth/google", {
+      const res = await fetch("https://repressedly-hyperopic-rosario.ngrok-free.dev/api/auth/google", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

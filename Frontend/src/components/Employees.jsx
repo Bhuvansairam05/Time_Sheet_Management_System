@@ -71,13 +71,13 @@ function Employees() {
             setLoading(true);
             const token = localStorage.getItem("token");
 
-            let timeUrl = `http://localhost:5000/api/timesheet/summary?filter=${filter}`;
+            let timeUrl = `https://repressedly-hyperopic-rosario.ngrok-free.dev/api/timesheet/summary?filter=${filter}`;
             if (filter === "custom" && fromDate && toDate) {
                 timeUrl += `&from=${fromDate}&to=${toDate}`;
             }
 
             const [usersRes, timeRes] = await Promise.all([
-                fetch("http://localhost:5000/api/auth/getEmployees", {
+                fetch("https://repressedly-hyperopic-rosario.ngrok-free.dev/api/auth/getEmployees", {
                     headers: { Authorization: `Bearer ${token}` },
                 }),
                 fetch(timeUrl, {
@@ -129,7 +129,7 @@ function Employees() {
                                 const token = localStorage.getItem("token");
 
                                 await fetch(
-                                    `http://localhost:5000/api/admin/removeUser/${id}`,
+                                    `https://repressedly-hyperopic-rosario.ngrok-free.dev/api/admin/removeUser/${id}`,
                                     {
                                         method: "DELETE",
                                         headers: { Authorization: `Bearer ${token}` },
@@ -177,7 +177,7 @@ function Employees() {
             const token = localStorage.getItem("token");
 
             const res = await fetch(
-                `http://localhost:5000/api/projects/byManager/${managerId}`,
+                `https://repressedly-hyperopic-rosario.ngrok-free.dev/api/projects/byManager/${managerId}`,
                 {
                     headers: { Authorization: `Bearer ${token}` },
                 }
@@ -195,7 +195,7 @@ function Employees() {
             const token = localStorage.getItem("token");
 
             const response = await fetch(
-                "http://localhost:5000/api/admin/addUser",
+                "https://repressedly-hyperopic-rosario.ngrok-free.dev/api/admin/addUser",
                 {
                     method: "POST",
                     headers: {
@@ -240,7 +240,7 @@ function Employees() {
             const token = localStorage.getItem("token");
 
             const response = await fetch(
-                `http://localhost:5000/api/admin/updateUser/${userId}`,
+                `https://repressedly-hyperopic-rosario.ngrok-free.dev/api/admin/updateUser/${userId}`,
                 {
                     method: "PUT",
                     headers: {
@@ -267,7 +267,7 @@ function Employees() {
         try {
             const token = localStorage.getItem("token");
 
-            await fetch(`http://localhost:5000/api/admin/transferResponsibilities`, {
+            await fetch(`https://repressedly-hyperopic-rosario.ngrok-free.dev/api/admin/transferResponsibilities`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -316,7 +316,7 @@ function Employees() {
         try {
             const token = localStorage.getItem("token");
 
-            let url = `http://localhost:5000/api/timesheet/employee/${userId}?filter=${filter}`;
+            let url = `https://repressedly-hyperopic-rosario.ngrok-free.dev/api/timesheet/employee/${userId}?filter=${filter}`;
             if (filter === "custom" && fromDate && toDate) {
                 url += `&from=${fromDate}&to=${toDate}`;
             }

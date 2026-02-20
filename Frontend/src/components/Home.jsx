@@ -16,7 +16,7 @@ function Home() {
   useEffect(() => {
     const fetchHomeData = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/auth/homeData");
+        const res = await axios.get("https://repressedly-hyperopic-rosario.ngrok-free.dev/api/auth/homeData");
         if (res.data.success) {
           setStats({
             totalProjects: res.data.data.totalProjects,

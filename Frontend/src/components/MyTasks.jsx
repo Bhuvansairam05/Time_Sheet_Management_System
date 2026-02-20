@@ -88,7 +88,7 @@ function MyTasks() {
       }
       console.log(payload);
       const res = await axios.post(
-        "http://localhost:5000/api/timesheet/addTimesheet",
+        "https://repressedly-hyperopic-rosario.ngrok-free.dev/api/timesheet/addTimesheet",
         { tasks: payload }
       );
 
@@ -111,7 +111,7 @@ function MyTasks() {
     try {
       setLoading(true);
 
-      let url = `http://localhost:5000/api/timesheet/filteredTimesheet?type=${filterType.toLowerCase()}&employeeId=${employeeId}`;
+      let url = `https://repressedly-hyperopic-rosario.ngrok-free.dev/api/timesheet/filteredTimesheet?type=${filterType.toLowerCase()}&employeeId=${employeeId}`;
 
       if (filterType === "Custom") {
         url += `&from=${fromDate}&to=${toDate}`;
@@ -140,7 +140,7 @@ function MyTasks() {
     const fetchProjects = async () => {
       try {
         const res = await axios.get(
-          "http://localhost:5000/api/timesheet/projectsList"
+          "https://repressedly-hyperopic-rosario.ngrok-free.dev/api/timesheet/projectsList"
         );
 
         if (res.data.success) {

@@ -18,7 +18,7 @@ function Projects() {
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        "http://localhost:5000/api/admin/getProjects",
+        "https://repressedly-hyperopic-rosario.ngrok-free.dev/api/admin/getProjects",
         {
           method: "GET",
           headers: {
@@ -46,7 +46,7 @@ function Projects() {
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        "http://localhost:5000/api/auth/getEmployees",
+        "https://repressedly-hyperopic-rosario.ngrok-free.dev/api/auth/getEmployees",
         {
           headers: { Authorization: `Bearer ${token}` },
         }
@@ -75,7 +75,7 @@ function Projects() {
       const token = localStorage.getItem("token");
 
       const res = await fetch(
-        "http://localhost:5000/api/admin/addProject",
+        "https://repressedly-hyperopic-rosario.ngrok-free.dev/api/admin/addProject",
         {
           method: "POST",
           headers: {
@@ -146,7 +146,7 @@ const handleUpdateProject = async () => {
               const token = localStorage.getItem("token");
 
               const res = await fetch(
-                `http://localhost:5000/api/admin/updateProject/${selectedProject.project_id}`,
+                `https://repressedly-hyperopic-rosario.ngrok-free.dev/api/admin/updateProject/${selectedProject.project_id}`,
                 {
                   method: "PUT",
                   headers: {
