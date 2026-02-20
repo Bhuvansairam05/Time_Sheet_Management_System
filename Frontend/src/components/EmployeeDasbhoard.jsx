@@ -287,16 +287,16 @@ function EmployeeDashboard() {
 
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-50">
         <nav className="bg-white shadow-sm border-b border-blue-100">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-[1700px] 2xl:max-w-[1900px] mx-auto px-6 lg:px-12">
             <div className="flex justify-between items-center h-16">
               <div className="flex items-center gap-3">
                 <img
                   src={logo}
-                  alt="TimeTrack Pro Logo"
+                  alt="Gradious Logo"
                   className="h-8 w-auto object-contain"
                 />
                 <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-500 to-blue-600 bg-clip-text text-transparent">
-                  TimeTrack Pro
+                  Gradious TimeSheet
                 </h1>
                 <span className="ml-2 px-3 py-1 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
                   Employee
@@ -312,7 +312,7 @@ function EmployeeDashboard() {
             </div>
           </div>
         </nav>
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <main className="max-w-[1700px] 2xl:max-w-[1900px] mx-auto px-6 lg:px-12 py-10">
           <div className="mb-8">
             <h2 className="text-3xl font-bold text-gray-900 mb-2">
               Welcome back, {user?.name}!
@@ -447,7 +447,7 @@ function EmployeeDashboard() {
                     <p className="text-sm text-gray-400">Start tracking your time by adding a task</p>
                   </div>
                 ) : (
-                  <table className="w-full">
+                  <table className="w-full table-fixed">
                     <thead className="bg-blue-50 border-b border-blue-100">
                       <tr>
                         <th className="px-6 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">
@@ -464,20 +464,20 @@ function EmployeeDashboard() {
                     <tbody className="divide-y divide-gray-100">
                       {tasks.map((task, i) => (
                         <tr key={task._id || i} className="hover:bg-blue-50 transition-colors">
-                          <td className="px-6 py-4 text-sm text-gray-900">
+                          <td className="px-6 py-4 text-sm text-center text-gray-900">
                             {i + 1}
                           </td>
                           <td className="px-6 py-4">
                             <div>
-                              <p className="text-sm font-medium text-gray-900">
+                              <p className="text-sm font-medium text-center text-gray-900">
                                 {task.projectName}
                               </p>
-                              <p className="text-xs text-gray-500 mt-1">
+                              <p className="text-xs text-center text-gray-500 mt-1">
                                 {task.description}
                               </p>
                             </div>
                           </td>
-                          <td className="px-6 py-4">
+                          <td className="px-6 text-center py-4">
                             <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-700">
                               {task.duration} hrs
                             </span>
@@ -488,7 +488,7 @@ function EmployeeDashboard() {
                   </table>
                 )}
               </div>
-              <div className="p-6 border-t border-blue-100 bg-blue-50">
+              {/* <div className="p-6 border-t border-blue-100 bg-blue-50">
                 <h4 className="font-semibold text-gray-800 mb-2">Summary</h4>
                 <p className="text-sm text-gray-700">
                   Total Tasks: <span className="font-bold">{summary.totalTasks}</span>
@@ -496,8 +496,27 @@ function EmployeeDashboard() {
                 <p className="text-sm text-gray-700">
                   Total Hours: <span className="font-bold">{summary.totalHours} hrs</span>
                 </p>
-              </div>
+              </div> */}
 
+
+                <div className="border-t border-blue-100 bg-blue-50">
+  <div className="grid grid-cols-3 items-center">
+
+    {/* Empty column for S.No */}
+    <div className="px-6 py-4"></div>
+
+    {/* Align under Project Name */}
+    <div className="px-6 py-4 text-center font-semibold text-gray-800">
+      Total Tasks: {summary.totalTasks}
+    </div>
+
+    {/* Align under Time Worked */}
+    <div className="px-6 py-4 text-center font-semibold text-blue-700">
+      {summary.totalHours} hrs
+    </div>
+
+  </div>
+</div>
             </div>
           </div>
         </main>
@@ -559,7 +578,7 @@ function EmployeeDashboard() {
             <div className="flex justify-between mt-4">
               <button
                 onClick={addRow}
-                className="bg-gray-200 px-4 py-2 rounded"
+                className="bg-blue-200 px-4 py-2 rounded"
               >
                 Add More
               </button>

@@ -161,7 +161,7 @@ function LoginModal({ isOpen, onClose }) {
           <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-900 to-blue-600 items-center justify-center p-8">
             <div className="text-center text-white">
               <div className="mb-6">
-                <h1 className="text-4xl font-bold mb-3">TimeTrack Pro</h1>
+                <h1 className="text-4xl font-bold mb-3">Gradious TimeSheet</h1>
                 <p className="text-lg text-blue-100
 ">Streamline Your Time Management</p>
               </div>
@@ -213,13 +213,13 @@ function LoginModal({ isOpen, onClose }) {
 
             <div className="max-w-md mx-auto">
               <div className="lg:hidden text-center mb-6">
-                <h1 className="text-2xl font-bold text-blue-700 mb-1">TimeTrack Pro</h1>
+                <h1 className="text-2xl font-bold text-blue-700 mb-1">Gradious TimeSheet</h1>
                 <p className="text-gray-600 text-sm">Welcome back!</p>
               </div>
               <div className='overflow-y-hidden'>
                 <div className="mb-2">
-                  <h2 className="text-2xl font-bold text-gray-800 mb-1">Login</h2>
-                  <p className="text-gray-600 text-sm">Enter your credentials to access your account</p>
+                  <h2 className="text-2xl text-center font-bold text-gray-800 mb-1">Login</h2>
+                  <p className="text-gray-600 text-center text-sm">Enter your credentials to access your account</p>
                   {errors.message && (
                     <div className="mt-4 mx-auto inline-flex items-center justify-center gap-2 rounded-lg border border-red-300 bg-red-50 px-4 py-2 text-sm text-red-700">
                       <span>⚠️</span>
@@ -245,7 +245,7 @@ function LoginModal({ isOpen, onClose }) {
                         if (errors.message) setErrors({ ...errors, message: "" });
                       }}
                       placeholder="Enter your email"
-                      className={`w-64 px-4 py-2.5 border-2 rounded-lg focus:outline-none transition ${errors.email ? 'border-red-500' : 'border-gray-300 focus:border-[#2F6FD6]'
+                      className={`w-full px-4 py-2.5 border-2 rounded-lg focus:outline-none transition ${errors.email ? 'border-red-500' : 'border-gray-300 focus:border-[#2F6FD6]'
                         }`}
                     />
                     {errors.email && (
@@ -271,7 +271,7 @@ function LoginModal({ isOpen, onClose }) {
                           if (errors.message) setErrors({ ...errors, message: '' });
                         }}
                         placeholder="Enter your password"
-                        className={`w-64 px-4 py-2.5 pr-12 border-2 rounded-lg focus:outline-none transition ${errors.password ? 'border-red-500' : 'border-gray-300 focus:border-[#2F6FD6]'
+                        className={`w-full px-4 py-2.5 pr-12 border-2 rounded-lg focus:outline-none transition ${errors.password ? 'border-red-500' : 'border-gray-300 focus:border-[#2F6FD6]'
                           }`}
                       />
                       <button

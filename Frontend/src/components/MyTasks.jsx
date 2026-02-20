@@ -239,9 +239,9 @@ function MyTasks() {
 
           {/* Stats */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <StatCard title="Today's Hours" value={stats.todayHours} icon={<Clock />} timeFilter={timeFilter}/>
-            <StatCard title="Total Hours" value={stats.totalHours} icon={<Calendar />} timeFilter={timeFilter}/>
-            <StatCard title="Total Tasks" value={stats.totalTasks} icon={<TrendingUp />} timeFilter={timeFilter}/>
+            <StatCard title="Today's Hours" value={stats.todayHours} icon={<Clock />} timeFilter={timeFilter} />
+            <StatCard title="Total Hours" value={stats.totalHours} icon={<Calendar />} timeFilter={timeFilter} />
+            <StatCard title="Total Tasks" value={stats.totalTasks} icon={<TrendingUp />} timeFilter={timeFilter} />
           </div>
 
           {/* TABLE */}
@@ -337,7 +337,7 @@ function MyTasks() {
                     </p>
                   </div>
                 ) : (
-                  <table className="w-full">
+                  <table className="w-full table-fixed">
                     <thead className="bg-blue-50 border-b border-blue-100">
                       <tr>
                         <th className="px-6 py-3 text-center text-xs font-semibold text-gray-700 uppercase tracking-wider">S.No</th>
@@ -348,12 +348,12 @@ function MyTasks() {
                     <tbody className="divide-y divide-gray-100">
                       {tasks.map((task, i) => (
                         <tr key={task._id || i} className="hover:bg-blue-50 transition-colors">
-                          <td className="px-6 py-4 text-sm text-gray-900">{i + 1}</td>
+                          <td className="px-6 py-4 text-sm text-gray-900 text-center">{i + 1}</td>
                           <td className="px-6 py-4">
-                            <p className="text-sm font-medium text-gray-900">{task.projectName}</p>
-                            <p className="text-xs text-gray-500 mt-1">{task.description}</p>
+                            <p className="text-sm font-medium text-gray-900 text-center">{task.projectName}</p>
+                            <p className="text-xs text-gray-500 mt-1 text-center">{task.description}</p>
                           </td>
-                          <td className="px-6 py-4">
+                          <td className="px-6 py-4 text-center">
                             <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-700">
                               {task.duration} hrs
                             </span>
@@ -365,7 +365,7 @@ function MyTasks() {
                 )}
               </div>
 
-              <div className="p-6 border-t border-blue-100 bg-blue-50">
+              {/* <div className="p-6 border-t border-blue-100 bg-blue-50 text-center">
                 <h4 className="font-semibold text-gray-800 mb-2">Summary</h4>
                 <p className="text-sm text-gray-700">
                   Total Tasks: <span className="font-bold">{summary.totalTasks}</span>
@@ -373,7 +373,26 @@ function MyTasks() {
                 <p className="text-sm text-gray-700">
                   Total Hours: <span className="font-bold">{summary.totalHours} hrs</span>
                 </p>
-              </div>
+              </div> */}
+
+              <div className="border-t border-blue-100 bg-blue-50">
+  <div className="grid grid-cols-3 items-center">
+
+    {/* Empty column for S.No */}
+    <div className="px-6 py-4"></div>
+
+    {/* Align under Project Name */}
+    <div className="px-6 py-4 text-center font-semibold text-gray-800">
+      Total Tasks: {summary.totalTasks}
+    </div>
+
+    {/* Align under Time Worked */}
+    <div className="px-6 py-4 text-center font-semibold text-blue-700">
+      {summary.totalHours} hrs
+    </div>
+
+  </div>
+</div>
 
             </div>
           </div>
@@ -423,7 +442,7 @@ function MyTasks() {
             ))}
 
             <div className="flex justify-between mt-4">
-              <button onClick={addRow} className="bg-gray-200 px-4 py-2 rounded">Add More</button>
+              <button onClick={addRow} className="bg-blue-200 px-4 py-2 rounded">Add More</button>
               <div className="flex gap-3">
                 <button onClick={closeModal} className="border px-4 py-2 rounded">Cancel</button>
                 <button onClick={handleSubmitAll} className="bg-blue-500 text-white px-4 py-2 rounded">Submit</button>
@@ -437,7 +456,7 @@ function MyTasks() {
   );
 }
 
-const StatCard = ({ title, value, icon,timeFilter }) => (
+const StatCard = ({ title, value, icon, timeFilter }) => (
   <div className="bg-white rounded-xl shadow-sm border border-blue-100 p-6 hover:shadow-md transition-shadow">
     <div className="flex items-center justify-between">
       <div>
@@ -448,7 +467,7 @@ const StatCard = ({ title, value, icon,timeFilter }) => (
         {icon}
       </div>
     </div>
-    <p className="text-left text-sm text-gray-600 mb-1">{(title!=="Today's Hours")?"This "+timeFilter:""}</p>
+    <p className="text-left text-sm text-gray-600 mb-1">{(title !== "Today's Hours") ? "This " + timeFilter : ""}</p>
   </div>
 );
 

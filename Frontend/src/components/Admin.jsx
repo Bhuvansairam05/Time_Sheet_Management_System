@@ -39,16 +39,16 @@ function Admin() {
     {loading && <Loader />}
     <div className="min-h-screen bg-gray-50">
       <nav className="bg-white shadow-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-[1700px] 2xl:max-w-[1900px] mx-auto px-6 lg:px-12">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center gap-2">
               <img
                 src={logo}
-                alt="TimeTrack Pro Logo"
+                alt="Gradious Logo"
                 className="h-7 w-auto object-contain"
               />
               <h1 className="text-2xl font-bold text-blue-700">
-                TimeTrack Pro
+                Gradious TimeSheet 
               </h1>
               <span className="ml-2 px-3 py-1 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
                 Admin
@@ -137,7 +137,7 @@ function Admin() {
           </div>
         </div>
       </nav>
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+     <main className="max-w-[1700px] 2xl:max-w-[1900px] mx-auto px-6 lg:px-12 py-8">
         {activeTab === 'dashboard' && (
           <AdminDashboard/>
         )}

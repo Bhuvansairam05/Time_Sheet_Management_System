@@ -39,11 +39,11 @@ function Home() {
             <div className="flex items-center gap-2 whitespace-nowrap">
               <img
                 src={logo}
-                alt="TimeTrack Pro Logo"
+                alt="Gradious Logo"
                 className="h-6 sm:h-7 md:h-8 w-auto object-contain"
               />
               <span className="text-xl sm:text-2xl md:text-3xl font-bold text-blue-700">
-                TimeTrack Pro
+                Gradious TimeSheet
               </span>
             </div>
             <ul className="flex gap-2 sm:gap-4 md:gap-8 items-center text-xs sm:text-sm md:text-base">
@@ -222,13 +222,13 @@ function Home() {
         <section className="py-12 sm:py-16 md:py-20 px-4 sm:px-6 bg-white">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl sm:text-4xl font-bold mb-4 sm:mb-6 text-gray-800">Ready to Transform Your Time Management?</h2>
-            <p className="text-lg sm:text-xl text-gray-600 mb-6 sm:mb-8">Join hundreds of teams already using TimeTrack Pro to boost productivity</p>
+            <p className="text-lg sm:text-xl text-gray-600 mb-6 sm:mb-8">Join hundreds of teams already using Gradious TimeSheet to boost productivity</p>
             <button onClick={openLoginModal} className="inline-block bg-blue-700 text-white px-8 sm:px-10 py-3 sm:py-4 rounded-lg text-base sm:text-lg font-semibold hover:bg-blue-800 transition">Get Started Now</button>
           </div>
         </section>
         <footer id="contact" className="bg-gray-900 text-white py-8 sm:py-12 px-4 sm:px-6">
           <div className="max-w-7xl mx-auto text-center">
-            <div className="text-2xl sm:text-3xl font-bold text-blue-400 mb-3 sm:mb-4">TimeTrack Pro</div>
+            <div className="text-2xl sm:text-3xl font-bold text-blue-400 mb-3 sm:mb-4">Gradious TimeSheet</div>
             <p className="text-gray-400 mb-4 sm:mb-6 text-sm sm:text-base">Efficient time sheet management for modern teams</p>
             <div className="flex flex-wrap justify-center gap-4 sm:gap-8 mb-4 sm:mb-6 text-sm sm:text-base">
               <a href="#" className="text-gray-400 hover:text-blue-400 transition">Privacy Policy</a>
@@ -236,7 +236,7 @@ function Home() {
               <a href="#" className="text-gray-400 hover:text-blue-400 transition">Support</a>
             </div>
             <p className="text-gray-500 text-xs sm:text-sm">For more details visit gradious.com</p>
-            <p className="text-gray-500 text-xs sm:text-sm">© 2026 TimeTrack Pro. All rights reserved.</p>
+            <p className="text-gray-500 text-xs sm:text-sm">© 2026 Gradious TimeSheet. All rights reserved.</p>
           </div>
         </footer>
       </div>

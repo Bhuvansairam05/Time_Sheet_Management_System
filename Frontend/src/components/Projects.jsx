@@ -134,7 +134,7 @@ const handleUpdateProject = async () => {
       <div className="flex gap-2 justify-end">
         <button
           onClick={() => toast.dismiss(t.id)}
-          className="px-3 py-1 bg-gray-300 rounded"
+          className="px-3 py-1 bg-blue-300 rounded"
         >
           Cancel
         </button>
@@ -198,7 +198,7 @@ const handleUpdateProject = async () => {
       </div>
       <div className="overflow-x-auto">
         <table className="min-w-full border border-gray-200 rounded-lg">
-          <thead className="bg-gray-100">
+          <thead className="bg-blue-100">
             <tr>
               <th className="px-4 py-3">S.No</th>
               <th className="px-4 py-3">Project Name</th>
@@ -228,11 +228,11 @@ const handleUpdateProject = async () => {
             {!loading &&
               projects.map((project, index) => (
                 <tr key={project.project_id}>
-                  <td className="px-4 py-3">{index + 1}</td>
-                  <td className="px-4 py-3 font-medium">
+                  <td className="px-4 py-3 text-center">{index + 1}</td>
+                  <td className="px-4 py-3 font-medium text-center">
                     {project.project_name}
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3 text-center">
                     {project.manager_name}
                   </td>
                   <td className="px-4 py-3 text-center">
@@ -321,7 +321,7 @@ const handleUpdateProject = async () => {
             <div className="flex justify-end gap-3 mt-6">
               <button
                 onClick={() => setShowUpdateModal(false)}
-                className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-100"
+                className="px-4 py-2 rounded-lg border border-gray-300 text-gray-700 hover:bg-blue-100"
               >
                 Cancel
               </button>

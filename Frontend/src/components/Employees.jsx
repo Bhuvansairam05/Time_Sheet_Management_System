@@ -379,7 +379,7 @@ function Employees() {
                 </div>
 
                 <table className="min-w-full border rounded-lg">
-                    <thead className="bg-gray-100">
+                    <thead className="bg-blue-100">
                         <tr>
                             <th className="px-4 py-3">S.No</th>
                             <th className="px-4 py-3">Name</th>
@@ -431,14 +431,14 @@ function Employees() {
                             <>
                                 <tr
                                     key={u._id}
-                                    className="border-t hover:bg-gray-50 cursor-pointer"
+                                    className="border-t hover:bg-blue-50 cursor-pointer"
                                     onClick={() => toggleRow(u._id)}
                                 >
-                                    <td className="px-4 py-3">{i + 1}</td>
-                                    <td className="px-4 py-3 font-medium">
+                                    <td className="px-4 py-3 text-center">{i + 1}</td>
+                                    <td className="px-4 py-3 font-medium text-center">
                                         {u.name}
                                     </td>
-                                    <td className="px-4 py-3">
+                                    <td className="px-4 py-3 text-center">
                                         {u.role === "manager" ? "Yes" : "No"}
                                     </td>
                                     <td className="px-4 py-3 text-center">
@@ -467,10 +467,10 @@ function Employees() {
                                 </tr>
 
                                 {expandedRows[u._id] && (
-                                    <tr className="bg-gray-50">
+                                    <tr className="bg-blue-50">
                                         <td colSpan="5" className="px-8 py-4">
                                             <table className="w-full border">
-                                                <thead className="bg-gray-200">
+                                                <thead className="bg-blue-200">
                                                     <tr>
                                                         <th className="px-3 py-2 text-left">Project</th>
                                                         <th className="px-3 py-2 text-right"><div className="flex items-center justify-end gap-2">
@@ -498,10 +498,10 @@ function Employees() {
                                                             {/* Project Row */}
                                                             <tr
                                                                 key={index}
-                                                                className="cursor-pointer hover:bg-gray-100"
+                                                                className="cursor-pointer hover:bg-blue-100"
                                                                 onClick={() => toggleProject(u._id, index)}
                                                             >
-                                                                <td className="px-3 py-2 font-medium text-gray-800">
+                                                                <td className="px-3 py-2 font-medium text-gray-800 text-left">
                                                                     {expandedProjects[u._id]?.[index] ? "▼ " : "▶ "}
                                                                     {p.projectName}
                                                                 </td>
@@ -513,7 +513,7 @@ function Employees() {
                                                             {/* Tasks Row */}
                                                             {expandedProjects[u._id]?.[index] && (
                                                                 <tr>
-                                                                    <td colSpan="2" className="px-6 py-4 bg-gray-50">
+                                                                    <td colSpan="2" className="px-6 py-4 bg-blue-50">
                                                                         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-4">
 
                                                                             {/* <table className="w-full table-fixed text-sm">
@@ -540,7 +540,7 @@ function Employees() {
                                                                                     {p.tasks?.map((task, tIndex) => (
                                                                                         <tr
                                                                                             key={tIndex}
-                                                                                            className="border-b last:border-none hover:bg-gray-50 transition"
+                                                                                            className="border-b last:border-none hover:bg-blue-50 transition"
                                                                                         >
                                                                                             <td className="py-3 px-4 font-medium text-gray-800">
                                                                                                 {task.description}
@@ -578,7 +578,7 @@ function Employees() {
                                                                                     {p.tasks?.map((task, i) => (
                                                                                         <tr
                                                                                             key={i}
-                                                                                            className="border-b last:border-none hover:bg-gray-50 transition"
+                                                                                            className="border-b last:border-none hover:bg-blue-50 transition"
                                                                                         >
                                                                                             <td className="w-1/2 py-3 px-6 text-left font-medium text-gray-800">
                                                                                                 {task.description}
